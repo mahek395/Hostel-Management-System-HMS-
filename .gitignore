@@ -28,4 +28,4 @@ yarn-error.log*
 # other
 coverage/
 *.log
-statics/*.avif
+statics/*.avifhostel-frontend/
