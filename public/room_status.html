@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warden Panel - Room Management</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary: #22223b;
+      --secondary: #4a4e69;
+      --accent: #9a8c98;
+      --bg: #f2e9e4;
+      --white: #fff;
+      --success: #38b000;
+      --danger: #e63946;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(34, 34, 59, 0.08);
+      --font: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+
+    html,
+    body {
+      background: var(--bg);
+      color: var(--primary);
+      font-family: var(--font);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 16px 64px 16px;
+    }
+
+    h2,
+    h3 {
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--primary);
+      letter-spacing: 0.01em;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid #e0e0e0;
+      background: none;
+      padding-bottom: 8px;
+    }
+
+    .tab-buttons button {
+      background: none;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-family: var(--font);
+      color: var(--secondary);
+      border-radius: var(--radius) var(--radius) 0 0;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      font-weight: 500;
+    }
+
+    .tab-buttons button.active-tab {
+      background: var(--white);
+      color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .tab-content {
+      display: none;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      margin-bottom: 32px;
+      animation: fadeIn 0.3s;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .btn,
+    .btn-primary,
+    .btn-secondary,
+    .allocate-btn,
+    .transfer-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      border: none;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+      box-shadow: none;
+      margin-bottom: 0;
+    }
+
+    .btn-primary,
+    .allocate-btn {
+      background: var(--secondary);
+      color: var(--white);
+    }
+
+    .btn-primary:hover,
+    .allocate-btn:hover {
+      background: var(--primary);
+    }
+
+    .btn-secondary {
+      background: #f2e9e4;
+      color: var(--secondary);
+      border: 1px solid #e0e0e0;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .transfer-btn {
+      background: linear-gradient(135deg, #38b000 0%, #2d9600 100%);
+      color: var(--white);
+      padding: 12px 24px;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(56, 176, 0, 0.3);
+    }
+
+    .transfer-btn:hover {
+      background: linear-gradient(135deg, #2d9600 0%, #267d00 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 176, 0, 0.4);
+    }
+
+    .transfer-btn:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .room-card {
+      background: #faf9f6;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px 20px;
+      margin-bottom: 20px;
+      position: relative;
+      border-left: 4px solid var(--accent);
+      transition: box-shadow 0.15s;
+    }
+
+    .room-card:hover {
+      box-shadow: 0 4px 24px rgba(34, 34, 59, 0.12);
+    }
+
+    .room-card h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+      color: var(--secondary);
+    }
+
+    .room-card ul {
+      margin: 0 0 0 0;
+      padding: 0 0 0 16px;
+      list-style: disc;
+    }
+
+    .room-card ul li {
+      margin-bottom: 4px;
+      color: var(--primary);
+      font-size: 0.97rem;
+    }
+
+    .room-card p {
+      margin: 4px 0 8px 0;
+      color: var(--secondary);
+      font-size: 0.97rem;
+    }
+
+    .allocate-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 0.95rem;
+      padding: 7px 16px;
+      background: var(--accent);
+      color: var(--white);
+    }
+
+    .allocate-btn:hover {
+      background: var(--secondary);
+    }
+
+    /* Transfer Requests Container */
+    #transfer-requests-container {
+      display: block;
+      width: 100%;
+    }
+
+    /* Redesigned Transfer Request Card */
+    .transfer-request-card {
+      background: linear-gradient(135deg, #ffffff 0%, #faf9f6 100%);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(34, 34, 59, 0.1);
+      padding: 28px;
+      margin-bottom: 24px;
+      border: 2px solid #e8e4df;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      display: block;
+      clear: both;
+    }
+
+    .transfer-request-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+      background: linear-gradient(180deg, #9a8c98 0%, #4a4e69 100%);
+    }
+
+    .transfer-request-card:hover {
+      box-shadow: 0 8px 32px rgba(34, 34, 59, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .transfer-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0ede8;
+    }
+
+    .transfer-card-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .student-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #9a8c98 0%, #4a4e69 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: white;
+      box-shadow: 0 2px 8px rgba(154, 140, 152, 0.3);
+      flex-shrink: 0;
+    }
+
+    .student-info h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .student-id {
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .request-date-badge {
+      background: linear-gradient(135deg, #e8e4df 0%, #d8d3cc 100%);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--secondary);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .transfer-card-body {
+      margin-bottom: 24px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #f7f5f2;
+      border-radius: 8px;
+    }
+
+    .info-icon {
+      font-size: 20px;
+      min-width: 24px;
+      flex-shrink: 0;
+    }
+
+    .info-content {
+      flex: 1;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .info-text {
+      font-size: 1rem;
+      color: var(--primary);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .transfer-card-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-top: 20px;
+      border-top: 2px solid #f0ede8;
+    }
+
+    .room-selection-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .room-select-label {
+      font-size: 0.9rem;
+      color: var(--secondary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .room-select {
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 2px solid #e0dcd6;
+      font-family: var(--font);
+      font-size: 1rem;
+      background: white;
+      color: var(--primary);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .room-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(154, 140, 152, 0.1);
+    }
+
+    .room-select:disabled {
+      background: #f0f0f0;
+      color: #999;
+      cursor: not-allowed;
+    }
+
+    .transfer-action {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .loading {
+      color: var(--secondary);
+      font-style: italic;
+      font-size: 1rem;
+      display: inline-block;
+    }
+
+    .loading::before {
+      content: "";
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e0e0e0;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: loading-spinner 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .error-message {
+      color: var(--danger);
+      background: #ffeaea;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 0.98rem;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .error-message::before {
+      content: "⚠️";
+      margin-right: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--accent);
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state-text {
+      font-size: 1.1rem;
+      color: var(--secondary);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      /* Move to extreme left of the viewport */
+      position: fixed;
+      left: 16px;
+      top: 20px;
+      z-index: 1100;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: transparent;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: color 0.15s, background 0.12s, transform 0.12s;
+    }
+
+    .back-link:hover {
+      color: var(--secondary);
+      background: rgba(74, 78, 105, 0.04);
+      transform: translateY(-1px);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(34, 34, 59, 0.25);
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.2s;
+    }
+
+    .modal-content {
+      background: var(--white);
+      color: var(--primary);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      width: 95%;
+      max-width: 400px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 8px;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--secondary);
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+
+    .close-btn:hover {
+      opacity: 1;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      font-size: 0.98rem;
+      color: var(--secondary);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .form-control {
+      padding: 10px;
+      border-radius: var(--radius);
+      border: 1px solid #e0e0e0;
+      font-family: var(--font);
+      font-size: 1rem;
+      background: #f7f7f7;
+      color: var(--primary);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-control:disabled {
+      background: #ececec;
+      color: #aaa;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes loading-spinner {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      body {
+        padding: 8px 2vw 32px 2vw;
+      }
+
+      .tab-content,
+      .modal-content {
+        padding: 16px;
+      }
+
+      /* Ensure back button doesn't overlap mobile content */
+      .back-link {
+        left: 10px;
+        top: 12px;
+        padding: 6px 8px;
+        font-size: 0.95rem;
+      }
+
+      .transfer-request-card {
+        padding: 20px 16px;
+      }
+
+      .tab-buttons button {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+
+      .transfer-card-header {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .request-date-badge {
+        align-self: flex-start;
+      }
+
+      .action-buttons,
+      .transfer-action {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .btn,
+      .btn-primary,
+      .btn-secondary,
+      .allocate-btn,
+      .transfer-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="tab-buttons">
+    <a href="/warden_home.html" class="back-link">
+      <span>🔙</span> Back to Warden Home
+    </a>
+    <button class="active-tab" onclick="showTab('roomOverview')">
+      <span>🏠</span> Room Overview
+    </button>
+    <button onclick="showTab('transferRequests')">
+      <span>🔁</span> Transfer Requests
+    </button>
+  </div>
+
+  <!-- Room Overview Tab -->
+  <div id="roomOverviewTab" class="tab-content active">
+    <h2>🏠 Rooms in Your Hostel</h2>
+    <button class="btn btn-primary" onclick="openAllocationModal()">➕ Allocate Student</button>
+    <div id="rooms-container">
+      <p class="loading">Loading room data...</p>
+    </div>
+  </div>
+
+  <!-- Transfer Requests Tab -->
+  <div id="transferRequestsTab" class="tab-content">
+    <h2>🔁 Pending Transfer Requests</h2>
+    <div id="transfer-requests-container">
+      <p class="loading">Loading transfer requests...</p>
+    </div>
+  </div>
+
+  <!-- Allocation Modal -->
+  <div id="allocationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Allocate Student to Room</h3>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="form-group">
+        <label for="studentSelect">Select Student:</label>
+        <select id="studentSelect" class="form-control">
+          <option value="">Loading students...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="roomSelect">Select Room:</label>
+        <select id="roomSelect" class="form-control" disabled>
+          <option value="">First select a student</option>
+        </select>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="allocateBtn" onclick="allocateStudent()" disabled>Allocate</button>
+      </div>
+      <div id="allocationMessage" style="margin-top: 15px;"></div>
+    </div>
+  </div>
+  <script>
+    // Global state
+    let currentTransferStudentId = null;
+
+    function showTab(tab) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+      });
+
+      // Show selected tab
+      document.getElementById(tab + 'Tab').classList.add('active');
+
+      // Update button styles
+      document.querySelectorAll('.tab-buttons button').forEach(btn => {
+        btn.classList.remove('active-tab');
+      });
+
+      if (tab === 'roomOverview') {
+        document.querySelector(".tab-buttons button:nth-child(1)").classList.add("active-tab");
+        loadRoomStatus();
+      } else {
+        document.querySelector(".tab-buttons button:nth-child(2)").classList.add("active-tab");
+        loadTransferRequests();
+      }
+    }
+
+    async function loadRoomStatus() {
+      const container = document.getElementById('rooms-container');
+      container.innerHTML = '<p class="loading">Loading room data...</p>';
+
+      try {
+        const response = await fetch('/room_status');
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+        container.innerHTML = '';
+
+        if (!data.rooms || data.rooms.length === 0) {
+          container.innerHTML = '<p>No rooms found in your hostel.</p>';
+          return;
+        }
+
+        data.rooms.forEach(room => {
+          const students = room.occupants.length > 0
+            ? '<ul>' + room.occupants.map(s =>
+              `<li>${s.Student_ID} - ${s.Name}</li>`
+            ).join('') + '</ul>'
+            : '<p>No students in this room.</p>';
+
+          const card = document.createElement('div');
+          card.className = 'room-card';
+          card.innerHTML = `
+            <h3>Room ${room.Room_Number}</h3>
+            <p><strong>Capacity:</strong> ${room.Capacity}</p>
+            <p><strong>Status:</strong> ${room.Status}</p>
+            <p><strong>Occupants:</strong></p>
+            ${students}
+            <button class="allocate-btn" onclick="allocateToRoom('${room.Room_ID}', ${room.Capacity}, ${room.occupants.length})">
+              Allocate Student
+            </button>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error('Error loading rooms:', err);
+        container.innerHTML = `
+          <p class="error-message">Error loading room data. Please try again.</p>
+        `;
+      }
+    }
+
+    async function loadTransferRequests() {
+      const container = document.getElementById('transfer-requests-container');
+      container.innerHTML = '<p class="loading">Loading transfer requests...</p>';
+
+      try {
+        const response = await fetch('/warden_transfer_requests');
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+        container.innerHTML = '';
+
+        if (!data.length) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <p class="empty-state-text">No pending transfer requests at the moment.</p>
+            </div>
+          `;
+          return;
+        }
+
+        data.forEach(req => {
+          const div = document.createElement('div');
+          div.className = 'transfer-request-card';
+          div.innerHTML = `
+            <div class="transfer-card-header">
+              <div class="transfer-card-title">
+                <div class="student-icon">👤</div>
+                <div class="student-info">
+                  <h3>Transfer Request</h3>
+                  <span class="student-id">Student ID: ${req.Student_ID}</span>
+                </div>
+              </div>
+              <div class="request-date-badge">
+                📅 ${new Date(req.Request_Date).toLocaleDateString()}
+              </div>
+            </div>
+            
+            <div class="transfer-card-body">
+              <div class="info-row">
+                <span class="info-icon">💬</span>
+                <div class="info-content">
+                  <div class="info-label">Reason</div>
+                  <p class="info-text">${req.Reason || 'No reason provided'}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="transfer-card-footer">
+              <div class="room-selection-group">
+                <label class="room-select-label">
+                  🏠 Select Destination Room
+                </label>
+                <select class="room-select" id="select-${req.Student_ID}">
+                  <option value="">Loading available rooms...</option>
+                </select>
+              </div>
+              <div class="transfer-action">
+                <button class="transfer-btn" 
+                        onclick="handleTransfer('${req.Student_ID}')"
+                        disabled>
+                  ✓ Approve Transfer
+                </button>
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+
+          // Load available rooms for this request
+          loadAvailableRooms(req.Student_ID);
+        });
+
+      } catch (err) {
+        console.error('Error loading transfer requests:', err);
+        container.innerHTML = `
+          <p class="error-message">Error loading transfer requests. Please try again.</p>
+        `;
+      }
+    }
+
+    async function loadAvailableRooms(studentId) {
+      const select = document.getElementById(`select-${studentId}`);
+      const button = select.closest('.transfer-card-footer').querySelector('.transfer-btn');
+
+      try {
+        select.innerHTML = '<option value="">Loading rooms...</option>';
+        button.disabled = true;
+
+        const response = await fetch(`/available_rooms?excludeStudent=${studentId}`);
+        if (!response.ok) throw new Error('Failed to fetch rooms');
+
+        const { data: rooms, success, message } = await response.json();
+        if (!success) throw new Error(message);
+
+        select.innerHTML = '<option value="">Select destination room</option>';
+
+        if (rooms.length === 0) {
+          select.innerHTML = '<option value="">No available rooms</option>';
+          return;
+        }
+
+        rooms.forEach(room => {
+          const option = document.createElement('option');
+          option.value = room.id;
+          option.textContent =
+            `Room ${room.number} (${room.available} bed${room.available !== 1 ? 's' : ''} available) - ${room.occupants || 'Empty'}`;
+          select.appendChild(option);
+        });
+
+        select.addEventListener('change', () => {
+          button.disabled = !select.value;
+        });
+
+      } catch (err) {
+        console.error(`Error loading rooms for student ${studentId}:`, err);
+        select.innerHTML = '<option value="">Error loading rooms</option>';
+      }
+    }
+
+    async function handleTransfer(studentId) {
+      const select = document.getElementById(`select-${studentId}`);
+      const button = select.closest('.transfer-card-footer').querySelector('.transfer-btn');
+      const roomId = select.value;
+
+      if (!roomId) {
+        alert('Please select a room first');
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = '⏳ Processing...';
+
+      try {
+        const response = await fetch(`/process_transfer/${studentId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            selectedRoomId: roomId
+          })
+        });
+        const result = await response.json();
+        if (!result.success) throw new Error(result.message);
+
+        alert(`✅ Transfer successful! ${result.message}`);
+
+        // Refresh both tabs
+        loadTransferRequests();
+        loadRoomStatus();
+
+      } catch (err) {
+        console.error('Transfer failed:', err);
+        alert(`❌ Transfer failed: ${err.message}`);
+      } finally {
+        button.disabled = false;
+        button.textContent = '✓ Approve Transfer';
+      }
+    }
+
+    // Allocation Modal Functions
+    function openAllocationModal(roomId = null) {
+      const modal = document.getElementById('allocationModal');
+      modal.style.display = 'flex';
+
+      // Reset form
+      document.getElementById('studentSelect').innerHTML = '<option value="">Loading students...</option>';
+      document.getElementById('roomSelect').innerHTML = '<option value="">First select a student</option>';
+      document.getElementById('roomSelect').disabled = true;
+      document.getElementById('allocateBtn').disabled = true;
+      document.getElementById('allocationMessage').innerHTML = '';
+
+      // Load unallocated students
+      loadUnallocatedStudents(roomId);
+    }
+
+    function closeModal() {
+      document.getElementById('allocationModal').style.display = 'none';
+    }
+
+    async function loadUnallocatedStudents(roomId = null) {
+      const studentSelect = document.getElementById('studentSelect');
+
+      try {
+        const response = await fetch('/unallocated_students');
+        if (!response.ok) throw new Error('Failed to fetch unallocated students');
+
+        const students = await response.json();
+        studentSelect.innerHTML = '<option value="">Select a student</option>';
+
+        if (students.length === 0) {
+          studentSelect.innerHTML = '<option value="">No unallocated students available</option>';
+          return;
+        }
+
+        students.forEach(student => {
+          const option = document.createElement('option');
+          option.value = student.Student_ID;
+          option.textContent = `${student.Student_ID} - ${student.Name}`;
+          studentSelect.appendChild(option);
+        });
+
+        // Enable room selection when student is selected
+        studentSelect.addEventListener('change', (e) => {
+          if (e.target.value) {
+            loadAvailableRoomsForAllocation(e.target.value, roomId);
+          } else {
+            document.getElementById('roomSelect').innerHTML = '<option value="">First select a student</option>';
+            document.getElementById('roomSelect').disabled = true;
+            document.getElementById('allocateBtn').disabled = true;
+          }
+        });
+
+      } catch (err) {
+        console.error('Error loading unallocated students:', err);
+        studentSelect.innerHTML = '<option value="">Error loading students</option>';
+      }
+    }
+
+    async function loadAvailableRoomsForAllocation(studentId, presetRoomId = null) {
+      const roomSelect = document.getElementById('roomSelect');
+      const allocateBtn = document.getElementById('allocateBtn');
+
+      try {
+        roomSelect.innerHTML = '<option value="">Loading available rooms...</option>';
+        roomSelect.disabled = true;
+        allocateBtn.disabled = true;
+
+        const response = await fetch(`/available_rooms`);
+        if (!response.ok) throw new Error('Failed to fetch available rooms');
+
+        const { data: rooms, success, message } = await response.json();
+        if (!success) throw new Error(message);
+
+        roomSelect.innerHTML = '<option value="">Select a room</option>';
+
+        if (rooms.length === 0) {
+          roomSelect.innerHTML = '<option value="">No available rooms</option>';
+          return;
+        }
+        rooms.forEach(room => {
+          const option = document.createElement('option');
+          option.value = room.id;
+          option.textContent =
+            `Room ${room.number} (${room.available} bed${room.available !== 1 ? 's' : ''} available) - ${room.occupants || 'Empty'}`;
+          roomSelect.appendChild(option);
+        });
+        roomSelect.disabled = false;
+        if (presetRoomId) {
+          roomSelect.value = presetRoomId;
+          allocateBtn.disabled = !presetRoomId;
+        }
+        roomSelect.addEventListener('change', (e) => {
+          allocateBtn.disabled = !e.target.value;
+        });
+      } catch (err) {
+        console.error('Error loading available rooms:', err);
+        roomSelect.innerHTML = '<option value="">Error loading rooms</option>';
+      }
+    }
+
+    async function allocateStudent() {
+      const studentId = document.getElementById('studentSelect').value;
+      const roomId = document.getElementById('roomSelect').value;
+      const allocateBtn = document.getElementById('allocateBtn');
+      const messageDiv = document.getElementById('allocationMessage');
+
+      if (!studentId || !roomId) {
+        messageDiv.innerHTML = '<p class="error-message">Please select both student and room.</p>';
+        return;
+      }
+
+      allocateBtn.disabled = true;
+      allocateBtn.textContent = '⏳ Allocating...';
+      messageDiv.innerHTML = '';
+
+      try {
+        const response = await fetch('/allocate_student', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ studentId, roomId })
+        });
+        const result = await response.json();
+        if (!result.success) throw new Error(result.message);
+
+        messageDiv.innerHTML = `<p style="color: var(--success);">✅ ${result.message}</p>`;
+
+        // Refresh room status
+        loadRoomStatus();
+
+        // Reset form
+        document.getElementById('studentSelect').value = '';
+        document.getElementById('roomSelect').innerHTML = '<option value="">First select a student</option>';
+        document.getElementById('roomSelect').disabled = true;
+        allocateBtn.disabled = true;
+
+      } catch (err) {
+        console.error('Allocation failed:', err);
+        messageDiv.innerHTML = `<p class="error-message">❌ Allocation failed: ${err.message}</p>`;
+      } finally {
+        allocateBtn.disabled = false;
+        allocateBtn.textContent = 'Allocate';
+      }
+    }
+
+    function allocateToRoom(roomId, capacity, currentOccupants) {
+      openAllocationModal(roomId);
+    }
+
+    // Initial load
+    loadRoomStatus();
+  </script>
+</body>
+
+</html>

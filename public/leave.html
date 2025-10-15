@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f1ed;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* Header with logo */
+        .header {
+            background-color: white;
+            padding: 15px 30px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #7dd3c0 0%, #5fb8a6 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        /* Main content container */
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 42px;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .title-underline {
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(90deg, #7dd3c0 0%, #ff6b6b 100%);
+            margin: 0 auto 50px;
+            border-radius: 2px;
+        }
+
+        /* Button container */
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Table styling */
+        .table-container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: none;
+        }
+
+        .table-container.show {
+            display: block;
+        }
+
+        #leaveTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        th {
+            color: white;
+            padding: 18px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            font-size: 15px;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f7fafc;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Status badges */
+        td:nth-child(4) {
+            font-weight: 600;
+        }
+
+        /* Back button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: #764ba2;
+            transform: translateX(-4px);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 80px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            button {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .table-container {
+                padding: 20px;
+                overflow-x: auto;
+            }
+
+            #leaveTable {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 12px 8px;
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+            display: none;
+        }
+
+        .empty-state.show {
+            display: block;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">HMS</div>
+        <span class="header-title">Hostel Management System</span>
+    </div>
+
+    <div class="container">
+        <a href="home.html" class="back-button">
+            ← Back to Dashboard
+        </a>
+
+        <h1>Leave Management</h1>
+        <div class="title-underline"></div>
+
+        <div class="button-container">
+            <button onclick="location.href='apply-leave.html'">Apply for Leave</button>
+            <button onclick="viewLeaves()">View Applied Leaves</button>
+        </div>
+
+        <div class="table-container">
+            <table id="leaveTable">
+                <thead>
+                    <tr>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Destination</th>
+                        <th>Apply Time</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">📋</div>
+                <p>No leave records found. Click "View Applied Leaves" to load your leave history.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function viewLeaves() {
+            const tableContainer = document.querySelector(".table-container");
+            
+            // Toggle visibility if table is already shown
+            if (tableContainer.classList.contains("show")) {
+                tableContainer.classList.remove("show");
+                return;
+            }
+            
+            fetch(`/view-leaves`)
+                .then(response => response.json())
+                .then(data => {
+                    const table = document.getElementById("leaveTable");
+                    const emptyState = document.getElementById("emptyState");
+                    const tbody = table.querySelector("tbody");
+                    tbody.innerHTML = "";
+                    
+                    if (data.length === 0) {
+                        emptyState.classList.add("show");
+                        emptyState.innerHTML = `
+                            <div class="empty-state-icon">📋</div>
+                            <p>No leave applications found.</p>
+                        `;
+                        tableContainer.classList.add("show");
+                    } else {
+                        emptyState.classList.remove("show");
+                        tableContainer.classList.add("show");
+                        data.forEach(leave => {
+                            const row = `<tr>
+                                <td>${leave.Start_Date}</td>
+                                <td>${leave.End_Date}</td>
+                                <td>${leave.Reason}</td>
+                                <td>${leave.Status}</td>
+                                <td>${leave.Destination}</td>
+                                <td>${leave.Apply_Time}</td>
+                            </tr>`;
+                            tbody.innerHTML += row;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching leaves:", error);
+                    const tableContainer = document.querySelector(".table-container");
+                    const emptyState = document.getElementById("emptyState");
+                    tableContainer.classList.add("show");
+                    emptyState.classList.add("show");
+                    emptyState.innerHTML = `
+                        <div class="empty-state-icon">⚠️</div>
+                        <p>Error loading leave records. Please try again.</p>
+                    `;
+                });
+        }             
+    </script>
+</body>
+</html>

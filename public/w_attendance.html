@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warden - Attendance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #22223b;
+      --secondary: #4a4e69;
+      --accent: #9a8c98;
+      --bg: #f2e9e4;
+      --white: #fff;
+      --success: #38b000;
+      --warning: #DBD56E;
+      --danger: #FC7753;
+      --info: #66D7D1;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(34, 34, 59, 0.08);
+      --shadow-hover: 0 4px 20px rgba(34, 34, 59, 0.12);
+      --font: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+    
+    /* Global Reset */
+    *, *:before, *:after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Base Styles */
+    body {
+      font-family: var(--font);
+      background-color: var(--bg);
+      color: var(--primary);
+      padding: 32px 16px 64px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 24px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .subtitle {
+      color: var(--secondary);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+    
+    /* Date Selection */
+    .date-container {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--info);
+    }
+    
+    .date-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .date-group label {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    #date {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 1px solid #e0e0e0;
+      background-color: #fafafa;
+      color: var(--primary);
+      font-family: var(--font);
+      font-size: 1rem;
+      flex: 1;
+      min-width: 200px;
+      transition: all 0.2s ease;
+    }
+    
+    #date:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(154, 140, 152, 0.1);
+      background-color: var(--white);
+    }
+    
+    /* Stats Bar */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .stat-card {
+      background: var(--white);
+      padding: 16px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    
+    .stat-card:nth-child(1) .stat-number { color: var(--success); }
+    .stat-card:nth-child(2) .stat-number { color: var(--danger); }
+    .stat-card:nth-child(3) .stat-number { color: var(--warning); }
+    
+    /* Student List */
+    #student-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    /* Student Card */
+    .student-card {
+      background: var(--white);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.2s ease;
+      border-left: 4px solid var(--accent);
+    }
+    
+    .student-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    
+    .student-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+    
+    .student-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+    
+    .student-details {
+      flex: 1;
+    }
+    
+    .student-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+    
+    .student-id {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    
+    /* Radio Button Group */
+    .radio-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .radio-option {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .radio-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+    
+    .radio-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      transition: all 0.2s ease;
+      background-color: #f8f8f8;
+      border: 2px solid transparent;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--secondary);
+      min-width: 100px;
+    }
+    
+    /* Present styling */
+    .radio-option.present .radio-label {
+      background-color: rgba(56, 176, 0, 0.08);
+    }
+    
+    .radio-option.present input:checked ~ .radio-label {
+      background-color: rgba(56, 176, 0, 0.15);
+      border-color: var(--success);
+      color: var(--success);
+      font-weight: 600;
+      box-shadow: 0 0 0 3px rgba(56, 176, 0, 0.1);
+    }
+    
+    .radio-option.present input:checked ~ .radio-label::before {
+      content: "✓ ";
+      margin-right: 4px;
+    }
+    
+    /* Absent styling */
+    .radio-option.absent .radio-label {
+      background-color: rgba(252, 119, 83, 0.08);
+    }
+    
+    .radio-option.absent input:checked ~ .radio-label {
+      background-color: rgba(252, 119, 83, 0.15);
+      border-color: var(--danger);
+      color: var(--danger);
+      font-weight: 600;
+      box-shadow: 0 0 0 3px rgba(252, 119, 83, 0.1);
+    }
+    
+    .radio-option.absent input:checked ~ .radio-label::before {
+      content: "✗ ";
+      margin-right: 4px;
+    }
+    
+    /* On Leave styling */
+    .radio-option.leave .radio-label {
+      background-color: rgba(219, 213, 110, 0.08);
+    }
+    
+    .radio-option.leave input:checked ~ .radio-label {
+      background-color: rgba(219, 213, 110, 0.15);
+      border-color: var(--warning);
+      color: #c4bf4c;
+      font-weight: 600;
+      box-shadow: 0 0 0 3px rgba(219, 213, 110, 0.1);
+    }
+    
+    .radio-option.leave input:checked ~ .radio-label::before {
+      content: "🏖️ ";
+      margin-right: 4px;
+    }
+    
+    .radio-label:hover {
+      background-color: #f0f0f0;
+    }
+    
+    /* Submit Button */
+    #submit-btn {
+      background: linear-gradient(135deg, var(--success) 0%, #2d9600 100%);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius);
+      padding: 14px 32px;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      display: block;
+      margin: 32px auto;
+      min-width: 200px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(56, 176, 0, 0.3);
+    }
+    
+    #submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 176, 0, 0.4);
+    }
+    
+    #submit-btn:active {
+      transform: translateY(0);
+    }
+    
+    #submit-btn:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    
+    /* Back Link - pinned to left edge */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      /* anchor to viewport left */
+      position: fixed;
+      left: 16px;
+      top: 20px;
+      z-index: 1100;
+      padding: 6px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: color 0.2s, background 0.12s, transform 0.12s;
+      background: transparent;
+    }
+
+    .back-link:hover {
+      color: var(--secondary);
+      background: rgba(74,78,105,0.04);
+      transform: translateY(-1px);
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+    
+    .empty-state-text {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+    
+    .empty-state-subtext {
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+    
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--secondary);
+      font-size: 1.1rem;
+    }
+    
+    .loading::before {
+      content: "";
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e0e0e0;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Success Message */
+    .success-message {
+      background: rgba(56, 176, 0, 0.1);
+      color: var(--success);
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid var(--success);
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      body {
+        padding: 16px 12px 48px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .student-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .student-info {
+        width: 100%;
+      }
+      
+      .radio-group {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .radio-label {
+        padding: 8px 12px;
+        min-width: 80px;
+        font-size: 0.85rem;
+      }
+      
+      .date-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      #date {
+        width: 100%;
+      }
+      
+      .stats-bar {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      
+      .stat-card {
+        padding: 12px;
+      }
+      
+      .stat-number {
+        font-size: 1.5rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .radio-group {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .radio-label {
+        width: 100%;
+      }
+      
+      .stats-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h2>
+        <span>📋</span>
+        Mark Attendance
+      </h2>
+      <p class="subtitle">Record daily attendance for hostel students</p>
+    </div>
+    
+    <div class="date-container">
+      <div class="date-group">
+        <label for="date">
+          <span>📅</span>
+          Select Date:
+        </label>
+        <input type="date" id="date" required>
+      </div>
+    </div>
+    
+    <div class="stats-bar" id="stats-bar" style="display: none;">
+      <div class="stat-card">
+        <div class="stat-number" id="present-count">0</div>
+        <div class="stat-label">Present</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="absent-count">0</div>
+        <div class="stat-label">Absent</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="leave-count">0</div>
+        <div class="stat-label">On Leave</div>
+      </div>
+    </div>
+    
+    <div id="student-list">
+      <div class="loading">Loading students...</div>
+    </div>
+    
+    <button id="submit-btn" style="display: none;">✓ Submit Attendance</button>
+    
+    <a href="/warden_home.html" class="back-link">
+      <span>🔙</span> Back to Warden Home
+    </a>
+  </div>
+
+  <script>
+    const studentList = document.getElementById('student-list');
+    const submitBtn = document.getElementById('submit-btn');
+    const statsBar = document.getElementById('stats-bar');
+
+    // Set max date to today to prevent future attendance marking
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date').max = today;
+    document.getElementById('date').value = today;
+
+    let students = [];
+
+    // Update statistics
+    function updateStats() {
+      const radios = document.querySelectorAll('input[type="radio"]:checked');
+      let present = 0, absent = 0, leave = 0;
+      
+      radios.forEach(radio => {
+        if (radio.value === 'Present') present++;
+        else if (radio.value === 'Absent') absent++;
+        else if (radio.value === 'On Leave') leave++;
+      });
+      
+      document.getElementById('present-count').textContent = present;
+      document.getElementById('absent-count').textContent = absent;
+      document.getElementById('leave-count').textContent = leave;
+    }
+
+    fetch('/warden_attendance', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => {
+        students = data;
+        studentList.innerHTML = '';
+        
+        if (!students || students.length === 0) {
+          studentList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">👥</div>
+              <p class="empty-state-text">No students found</p>
+              <p class="empty-state-subtext">There are no students to mark attendance for.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        data.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'student-card';
+          div.innerHTML = `
+            <div class="student-info">
+              <div class="student-avatar">👤</div>
+              <div class="student-details">
+                <div class="student-name">${s.Name}</div>
+                <div class="student-id">ID: ${s.Student_ID}</div>
+              </div>
+            </div>
+            <div class="radio-group" data-id="${s.Student_ID}">
+              <label class="radio-option present">
+                <input type="radio" name="att-${s.Student_ID}" value="Present" checked onchange="updateStats()">
+                <span class="radio-label">Present</span>
+              </label>
+              <label class="radio-option absent">
+                <input type="radio" name="att-${s.Student_ID}" value="Absent" onchange="updateStats()">
+                <span class="radio-label">Absent</span>
+              </label>
+              <label class="radio-option leave">
+                <input type="radio" name="att-${s.Student_ID}" value="On Leave" onchange="updateStats()">
+                <span class="radio-label">On Leave</span>
+              </label>
+            </div>
+          `;
+          studentList.appendChild(div);
+        });
+        
+        // Show submit button and stats
+        submitBtn.style.display = 'block';
+        statsBar.style.display = 'grid';
+        updateStats();
+      })
+      .catch(err => {
+        console.error('Error loading students:', err);
+        studentList.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <p class="empty-state-text">Error loading students</p>
+            <p class="empty-state-subtext">Please try refreshing the page.</p>
+          </div>
+        `;
+      });
+
+    submitBtn.addEventListener('click', () => {
+      const date = document.getElementById('date').value;
+      if (!date) return alert("⚠️ Please select a date");
+
+      const attendance = Array.from(document.querySelectorAll('.radio-group')).map(group => {
+        const studentID = group.dataset.id;
+        const selected = group.querySelector('input[type="radio"]:checked').value;
+        return {
+          Student_ID: studentID,
+          Status: selected
+        };
+      });
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ Submitting...';
+
+      fetch('/warden_attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ date, attendance })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert('✅ ' + data.message);
+        submitBtn.textContent = '✓ Submit Attendance';
+      })
+      .catch(err => {
+        alert("❌ Error saving attendance");
+        console.error(err);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup - Hostel Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 
+         * Hostel Management System - Signup Page Styles
+         * Color Palette: #DBD56E, #403D58, #66D7D1, #FC7753, #F2EFEA
+         */
+        
+        /* CSS Variables - Color Palette */
+        :root {
+            /* Main Colors */
+            --yellow: #DBD56E;
+            --dark-purple: #403D58;
+            --teal: #66D7D1;
+            --coral: #FC7753;
+            --off-white: #F2EFEA;
+            
+            /* Shades and Tints */
+            --yellow-light: #e5e093;
+            --yellow-dark: #c4bf4c;
+            --purple-light: #56527a;
+            --purple-dark: #2e2c40;
+            --teal-light: #8ce3df;
+            --teal-dark: #42c5be;
+            --coral-light: #fd9478;
+            --coral-dark: #fb5a2e;
+            --off-white-light: #ffffff;
+            --off-white-dark: #dbd6cc;
+            
+            /* Font Families */
+            --font-primary: 'Poppins', sans-serif;
+            --font-secondary: 'Montserrat', sans-serif;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2.5rem;
+            
+            /* Border Radius */
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 16px;
+            
+            /* Box Shadow */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+            
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+        }
+        
+        /* Global Reset */
+        *, *:before, *:after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Base Styles */
+        body {
+            font-family: var(--font-primary);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--dark-purple);
+            background-color: var(--off-white);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                linear-gradient(135deg, rgba(102, 215, 209, 0.1) 0%, rgba(219, 213, 110, 0.1) 100%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2366D7D1' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        /* Form Container */
+        #signupForm {
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #signupForm::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--teal), var(--coral));
+        }
+        
+        /* Form Title */
+        #signupForm h2 {
+            font-family: var(--font-secondary);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-purple);
+            margin-bottom: var(--spacing-lg);
+            text-align: center;
+            position: relative;
+        }
+        
+        #signupForm h2::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: var(--teal);
+            border-radius: 2px;
+        }
+        
+        /* Form Inputs */
+        #signupForm input {
+            width: 100%;
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+        }
+        
+        #signupForm input:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(102, 215, 209, 0.25);
+        }
+        
+        #signupForm label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+            color: var(--dark-purple);
+        }
+        
+        /* Form Button */
+        #signupForm button {
+            width: 100%;
+            padding: var(--spacing-md);
+            background-color: var(--teal);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-top: var(--spacing-sm);
+        }
+        
+        #signupForm button:hover {
+            background-color: var(--teal-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 215, 209, 0.4);
+        }
+        
+        #signupForm button:active {
+            transform: translateY(0);
+        }
+        
+        /* Form Links */
+        #signupForm p {
+            margin-top: var(--spacing-lg);
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--purple-light);
+        }
+        
+        #signupForm a {
+            color: var(--coral);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color var(--transition-fast);
+        }
+        
+        #signupForm a:hover {
+            color: var(--coral-dark);
+            text-decoration: underline;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 480px) {
+            #signupForm {
+                padding: var(--spacing-lg);
+                margin: var(--spacing-md);
+            }
+            
+            #signupForm h2 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* Input Focus Animation */
+        @keyframes inputFocus {
+            0% { box-shadow: 0 0 0 0 rgba(102, 215, 209, 0.4); }
+            70% { box-shadow: 0 0 0 5px rgba(102, 215, 209, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 215, 209, 0); }
+        }
+        
+        #signupForm input:focus {
+            animation: inputFocus 1s 1;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="signupForm">
+        <h2>Student Signup</h2>
+        <input type="text" id="student_Id" placeholder="Student ID" required />
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="text" id="Phone_Number" placeholder="Phone Number" required />
+        <label for="date_of_admission">Date of Admission:</label>
+        <input type="date" id="date_of_admission" />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit">Signup</button>
+        <p>Already have an account? <a href="/login">Login</a></p>
+    </form>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const student_Id = document.getElementById("student_Id").value;
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const Phone_Number = document.getElementById("Phone_Number").value;
+            const date_of_admission = document.getElementById("date_of_admission").value;
+            const password = document.getElementById("password").value;
+
+            const response = await fetch("/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    student_Id,
+                    name,
+                    email,
+                    Phone_Number,
+                    date_of_admission,
+                    password,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Signup successful! Redirecting to Login page...");
+                window.location.href = "/login";
+            } else {
+                alert(data.message);
+            }
+        });
+    </script>
+</body>
+
+</html>

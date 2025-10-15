@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warden - Complaints</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #22223b;
+      --secondary: #4a4e69;
+      --accent: #9a8c98;
+      --bg: #f2e9e4;
+      --white: #fff;
+      --success: #38b000;
+      --warning: #DBD56E;
+      --danger: #FC7753;
+      --info: #66D7D1;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(34, 34, 59, 0.08);
+      --shadow-hover: 0 4px 20px rgba(34, 34, 59, 0.12);
+      --font: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--bg);
+      color: var(--primary);
+      padding: 32px 16px 64px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 20px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .subtitle {
+      color: var(--secondary);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+
+    /* Complaints Container */
+    #complaints-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--secondary);
+      font-size: 1.1rem;
+    }
+
+    .loading::before {
+      content: "";
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e0e0e0;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+
+    .empty-state-text {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+
+    .empty-state-subtext {
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+
+    /* Complaint Card */
+    .complaint-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border-left: 4px solid var(--accent);
+      position: relative;
+    }
+
+    .complaint-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    /* Card Header */
+    .complaint-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .student-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .student-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .student-details h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+
+    .student-id {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Status Badge */
+    .status-badge {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    .status-pending {
+      background: linear-gradient(135deg, #FFF4E6 0%, #FFE8CC 100%);
+      color: #CC8800;
+    }
+
+    .status-in-progress {
+      background: linear-gradient(135deg, #E6F7FF 0%, #CCE9FF 100%);
+      color: #0066CC;
+    }
+
+    .status-resolved {
+      background: linear-gradient(135deg, #E6F9F0 0%, #CCF2DD 100%);
+      color: var(--success);
+    }
+
+    .status-rejected {
+      background: linear-gradient(135deg, #FFE6E6 0%, #FFCCCC 100%);
+      color: var(--danger);
+    }
+
+    /* Card Body */
+    .complaint-body {
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      margin-bottom: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: var(--secondary);
+      min-width: 90px;
+      flex-shrink: 0;
+    }
+
+    .info-content {
+      color: var(--primary);
+      flex: 1;
+      line-height: 1.6;
+    }
+
+    .timestamp {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-top: 12px;
+      font-style: italic;
+    }
+
+    /* Form Section */
+    .form-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #f0f0f0;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .form-group select,
+    .form-group textarea,
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius);
+      border: 1px solid #e0e0e0;
+      background-color: #fafafa;
+      color: var(--primary);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .form-group select:focus,
+    .form-group textarea:focus,
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(154, 140, 152, 0.1);
+      background-color: var(--white);
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    /* Resolution Section */
+    .resolution-section {
+      background: #f8f8f8;
+      padding: 16px;
+      border-radius: var(--radius);
+      margin-top: 12px;
+      border: 1px dashed var(--accent);
+    }
+
+    /* Inventory Section */
+    #inventory-section {
+      margin-top: 16px;
+      padding: 16px;
+      background: #f8f8f8;
+      border-radius: var(--radius);
+      border: 1px dashed var(--info);
+    }
+
+    .inventory-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .inventory-item select {
+      flex: 2;
+    }
+
+    .inventory-item input {
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .remove-btn {
+      background: transparent;
+      border: none;
+      color: var(--danger);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .remove-btn:hover {
+      background: rgba(252, 119, 83, 0.1);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      border: none;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      color: var(--white);
+      box-shadow: 0 2px 8px rgba(74, 78, 105, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 78, 105, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 2px dashed var(--info);
+      color: var(--info);
+      padding: 10px 20px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(102, 215, 209, 0.1);
+      border-style: solid;
+    }
+
+    .btn-submit {
+      width: 100%;
+      margin-top: 20px;
+      background: linear-gradient(135deg, var(--success) 0%, #2d9600 100%);
+      color: var(--white);
+      padding: 14px;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(56, 176, 0, 0.3);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 176, 0, 0.4);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* Back Link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 32px;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--secondary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 16px 12px 48px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .complaint-card {
+        padding: 20px;
+      }
+
+      .complaint-header {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .status-badge {
+        align-self: flex-start;
+      }
+
+      .info-row {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .info-label {
+        min-width: auto;
+      }
+
+      .inventory-item {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .inventory-item input,
+      .inventory-item select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="page-header">
+    <h2>
+      <span>📋</span>
+      Student Complaints
+    </h2>
+    <p class="subtitle">Review and manage student complaints</p>
+  </div>
+
+  <div id="complaints-container">
+    <div class="loading">Loading complaints...</div>
+  </div>
+
+  <a href="/warden_home.html" class="back-link">
+    <span>🔙</span> Back to Warden Home
+  </a>
+</div>
+
+<script>
+  async function fetchComplaints() {
+    try {
+      const response = await fetch('/w_complaints');
+      const complaints = await response.json();
+      const container = document.getElementById('complaints-container');
+      container.innerHTML = '';
+
+      if (!complaints || complaints.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p class="empty-state-text">No complaints found</p>
+            <p class="empty-state-subtext">All caught up! There are no pending complaints at the moment.</p>
+          </div>
+        `;
+        return;
+      }
+
+      complaints.forEach(c => {
+        const filedDate = new Date(c.Date_Logged).toLocaleString('en-IN', {
+          day: '2-digit', month: 'short', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
+        
+        const statusClass = c.Status.toLowerCase().replace(/\s+/g, '-');
+        
+        const card = document.createElement('div');
+        card.className = 'complaint-card';
+        // Prefer server-provided student name and initials
+        const studentName = c.Student_Name || c.Name || 'Unknown Student';
+        const initials = c.Initials || (studentName !== 'Unknown Student' ? studentName.split(' ').map(p => p[0]).join('').toUpperCase().substring(0,2) : 'ST');
+        card.innerHTML = `
+          <div class="complaint-header">
+            <div class="student-info">
+              <div class="student-icon">${initials}</div>
+              <div class="student-details">
+                <h3>${studentName}</h3>
+                <span class="student-id">ID: ${c.Student_ID}</span>
+              </div>
+            </div>
+            <span class="status-badge status-${statusClass}">${c.Status}</span>
+          </div>
+
+          <div class="complaint-body">
+            <div class="info-row">
+              <span class="info-label">Description:</span>
+              <span class="info-content">${c.Description}</span>
+            </div>
+            <div class="timestamp">
+              <span>📅</span>
+              Filed: ${isNaN(Date.parse(c.Date_Logged)) ? 'Invalid Date' : filedDate}
+            </div>
+          </div>
+
+            <div class="form-section">
+            <div class="form-group">
+              <label for="status-${c.Complaint_ID}">Update Status:</label>
+              <select id="status-${c.Complaint_ID}" onchange="toggleResolution(${c.Complaint_ID})">
+                <option value="">Select Status</option>
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+              </select>
+            </div>
+
+            <div id="resolution-${c.Complaint_ID}" class="resolution-section" style="display: none;">
+              <div class="form-group">
+                <label for="resolutionDetails-${c.Complaint_ID}">Resolution Details:</label>
+                <textarea 
+                  id="resolutionDetails-${c.Complaint_ID}" 
+                  placeholder="Describe how the complaint was resolved..."
+                ></textarea>
+              </div>
+              <!-- Inventory usage section: add items used during resolution -->
+              <div id="inventory-section-${c.Complaint_ID}" class="inventory-section" style="display: none;">
+                <div class="form-group">
+                  <label>Inventory Used (if any):</label>
+                  <div id="inventory-list-${c.Complaint_ID}"></div>
+                  <button type="button" class="btn btn-secondary" onclick="addInventoryItem(${c.Complaint_ID})">+ Add Item</button>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-submit" onclick="updateStatus(${c.Complaint_ID})">
+              ✓ Submit Update
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    } catch (error) {
+      console.error('Error fetching complaints:', error);
+      const container = document.getElementById('complaints-container');
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">⚠️</div>
+          <p class="empty-state-text">Error loading complaints</p>
+          <p class="empty-state-subtext">Please try refreshing the page.</p>
+        </div>
+      `;
+    }
+  }
+
+  function toggleResolution(id) {
+    const selectedStatus = document.getElementById(`status-${id}`).value;
+    const resolutionDiv = document.getElementById(`resolution-${id}`);
+    resolutionDiv.style.display = selectedStatus === 'Resolved' ? 'block' : 'none';
+    // Show inventory usage UI when resolving
+    const invSection = document.getElementById(`inventory-section-${id}`);
+    if (invSection) invSection.style.display = selectedStatus === 'Resolved' ? 'block' : 'none';
+  }
+
+  async function updateStatus(complaintID) {
+    const status = document.getElementById(`status-${complaintID}`).value;
+    if (!status) return alert("⚠️ Please select a status.");
+
+    const body = { status };
+
+    if (status === 'Resolved') {
+      const details = document.getElementById(`resolutionDetails-${complaintID}`).value.trim();
+      if (!details) return alert("⚠️ Please provide resolution details.");
+      body.resolutionDetails = details;
+      // collect used inventory items (if any)
+      const used = [];
+      const list = document.getElementById(`inventory-list-${complaintID}`);
+      if (list) {
+        list.querySelectorAll('.inventory-item').forEach(row => {
+          const select = row.querySelector('select');
+          const qtyInput = row.querySelector('input');
+          const itemId = select ? select.value : null;
+          const qty = qtyInput ? Number(qtyInput.value) : 0;
+          if (itemId && qty && qty > 0) {
+            used.push({ itemId, qty });
+          }
+        });
+      }
+      body.usedInventory = used;
+    }
+
+    try {
+      const response = await fetch(`/update_complaint_status/${complaintID}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const result = await response.json();
+      alert(result.message || '✅ Status updated successfully!');
+      fetchComplaints();
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('❌ Something went wrong while updating.');
+    }
+  }
+
+  // ---- Inventory helpers for complaint resolution ----
+  // Cache inventory options for selects
+  let inventoryOptions = [];
+
+  async function loadInventoryOptions() {
+    try {
+      const res = await fetch('/get_warden_inventory', { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to load inventory');
+      const data = await res.json();
+      inventoryOptions = data.map(i => ({ id: i.Item_ID || i.id || i.Item_ID, name: i.Item_Name, available: i.Quantity }));
+    } catch (err) {
+      console.error('Error loading inventory options:', err);
+      inventoryOptions = [];
+    }
+  }
+
+  function addInventoryItem(complaintID) {
+    const list = document.getElementById(`inventory-list-${complaintID}`);
+    if (!list) return;
+
+    const row = document.createElement('div');
+    row.className = 'inventory-item';
+
+    // build select
+    const select = document.createElement('select');
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = '';
+    defaultOpt.textContent = 'Select item';
+    select.appendChild(defaultOpt);
+    inventoryOptions.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.id;
+      o.textContent = `${opt.name} (${opt.available} available)`;
+      select.appendChild(o);
+    });
+
+    const qty = document.createElement('input');
+    qty.type = 'number';
+    qty.min = '1';
+    qty.placeholder = 'Quantity used';
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'remove-btn';
+    remove.innerHTML = '✖';
+    remove.onclick = () => row.remove();
+
+    row.appendChild(select);
+    row.appendChild(qty);
+    row.appendChild(remove);
+
+    list.appendChild(row);
+  }
+
+
+  // Load inventory options then fetch complaints
+  window.onload = async () => {
+    await loadInventoryOptions();
+    fetchComplaints();
+  };
+</script>
+</body>
+</html>

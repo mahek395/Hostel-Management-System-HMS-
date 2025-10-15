@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Room Transfer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f1ed;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* Header with logo */
+        .header {
+            background-color: white;
+            padding: 15px 30px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #7dd3c0 0%, #5fb8a6 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        /* Main content container */
+        .container {
+            max-width: 600px;
+            margin: 100px auto 40px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 42px;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .title-underline {
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(90deg, #7dd3c0 0%, #ff6b6b 100%);
+            margin: 0 auto 50px;
+            border-radius: 2px;
+        }
+
+        /* Back button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: #764ba2;
+            transform: translateX(-4px);
+        }
+
+        /* Form card */
+        #transferForm {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #2d3748;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            color: #2d3748;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 0;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea::placeholder {
+            color: #a0aec0;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 13px;
+            color: #718096;
+            margin-top: 6px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            width: 100%;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Message styling */
+        #message {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        #message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+            animation: slideDown 0.3s ease;
+        }
+
+        #message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+            animation: slideDown 0.3s ease;
+        }
+
+        #message:empty {
+            display: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Info box */
+        .info-box {
+            background: #ebf4ff;
+            border-left: 4px solid #4299e1;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .info-box p {
+            color: #2c5282;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 80px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            #transferForm {
+                padding: 30px 20px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">HMS</div>
+        <span class="header-title">Hostel Management System</span>
+    </div>
+
+    <div class="container">
+        <a href="home.html" class="back-button">
+            ← Back to Dashboard
+        </a>
+
+        <h1>Room Transfer</h1>
+        <div class="title-underline"></div>
+
+        <div id="transferForm">
+            <h2>Transfer Reason</h2>
+
+            <form id="requestForm">
+                <div class="form-group">
+                    <textarea 
+                        id="reason" 
+                        required 
+                        placeholder="Please explain why you need to transfer rooms (e.g., medical reasons, compatibility issues, etc.)..."
+                    ></textarea>
+                </div>
+                <button type="submit" id="submitBtn">Submit Transfer Request</button>
+            </form>
+            <div id="message"></div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch student data (studentID and currentRoomID) from the backend
+        async function fetchStudentData() {
+            const messageDiv = document.getElementById("message");
+            
+            try {
+                const response = await fetch('/get_student_data');
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store the student data globally or in variables
+                    const student_id = data.studentID;
+                    const current_room_id = data.currentRoomID;
+
+                    // Listen for form submission and send transfer request
+                    document.getElementById("requestForm").addEventListener("submit", async (e) => {
+                        e.preventDefault();
+                        const submitBtn = document.getElementById("submitBtn");
+                        
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = "Submitting...";
+                        messageDiv.innerHTML = "";
+                        messageDiv.className = "";
+
+                        try {
+                            const response = await fetch("/transfer_request", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    student_id,
+                                    current_room_id,
+                                    reason: document.getElementById("reason").value
+                                })
+                            });
+
+                            const result = await response.json();
+
+                            if (!response.ok) throw new Error(result.message || "Submission failed");
+
+                            messageDiv.innerHTML = `
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="font-size: 24px;">✓</div>
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 4px;">Request Submitted Successfully!</div>
+                                        <div style="font-size: 13px; opacity: 0.9;">Your transfer request has been received. The admin team will review it and notify you within 2-3 business days.</div>
+                                    </div>
+                                </div>
+                            `;
+                            messageDiv.className = "success";
+                            document.getElementById("requestForm").reset();
+                            
+                            setTimeout(() => {
+                                messageDiv.innerHTML = "";
+                                messageDiv.className = "";
+                            }, 5000);
+                        } catch (err) {
+                            messageDiv.innerHTML = `
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="font-size: 24px;">✗</div>
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 4px;">Submission Failed</div>
+                                        <div style="font-size: 13px; opacity: 0.9;">${err.message}</div>
+                                    </div>
+                                </div>
+                            `;
+                            messageDiv.className = "error";
+                            console.error(err);
+                            
+                            setTimeout(() => {
+                                messageDiv.innerHTML = "";
+                                messageDiv.className = "";
+                            }, 5000);
+                        } finally {
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = "Submit Transfer Request";
+                        }
+                    });
+                } else {
+                    console.error('Error fetching student data:', data.message);
+                    messageDiv.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 24px;">✗</div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px;">Error Loading Data</div>
+                                <div style="font-size: 13px; opacity: 0.9;">${data.message}</div>
+                            </div>
+                        </div>
+                    `;
+                    messageDiv.className = "error";
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                messageDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 24px;">✗</div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">Connection Error</div>
+                            <div style="font-size: 13px; opacity: 0.9;">Error fetching student data. Please refresh the page and try again.</div>
+                        </div>
+                    </div>
+                `;
+                messageDiv.className = "error";
+            }
+        }
+
+        // Call the function to fetch the student data when the page loads
+        window.onload = fetchStudentData;
+    </script>
+</body>
+</html>

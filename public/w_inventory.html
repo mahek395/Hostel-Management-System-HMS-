@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warden - Inventory Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #22223b;
+      --secondary: #4a4e69;
+      --accent: #9a8c98;
+      --bg: #f2e9e4;
+      --white: #fff;
+      --success: #38b000;
+      --warning: #DBD56E;
+      --danger: #FC7753;
+      --info: #66D7D1;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(34, 34, 59, 0.08);
+      --shadow-hover: 0 4px 20px rgba(34, 34, 59, 0.12);
+      --font: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+    
+    /* Global Reset */
+    *, *:before, *:after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Base Styles */
+    body {
+      font-family: var(--font);
+      background-color: var(--bg);
+      color: var(--primary);
+      padding: 32px 16px 64px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 24px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .subtitle {
+      color: var(--secondary);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+    
+    /* Card Layout */
+    .card-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    
+    @media (min-width: 992px) {
+      .card-layout {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+    
+    /* Card Styles */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card-teal {
+      border-left: 4px solid var(--info);
+    }
+    
+    .card-yellow {
+      border-left: 4px solid var(--warning);
+    }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .card-icon {
+      font-size: 1.8rem;
+    }
+    
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .stat-card {
+      background: var(--white);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--info) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    
+    /* Inventory Table */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+    }
+    
+    thead {
+      background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+    }
+    
+    th {
+      color: var(--secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      padding: 16px;
+      text-align: left;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    
+    td {
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+      color: var(--primary);
+    }
+    
+    tbody tr {
+      transition: background-color 0.2s ease;
+    }
+    
+    tbody tr:hover {
+      background-color: #f8f8f8;
+    }
+    
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    /* Quantity Badge */
+    .quantity-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    
+    .quantity-high {
+      background: linear-gradient(135deg, #E6F9F0 0%, #CCF2DD 100%);
+      color: var(--success);
+    }
+    
+    .quantity-medium {
+      background: linear-gradient(135deg, #FFF4E6 0%, #FFE8CC 100%);
+      color: #CC8800;
+    }
+    
+    .quantity-low {
+      background: linear-gradient(135deg, #FFE6E6 0%, #FFCCCC 100%);
+      color: var(--danger);
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--accent);
+    }
+    
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+    
+    .empty-text {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+    
+    .empty-subtext {
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+    
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--secondary);
+      font-size: 0.9rem;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 1px solid #e0e0e0;
+      background-color: #fafafa;
+      color: var(--primary);
+      font-family: var(--font);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(154, 140, 152, 0.1);
+      background-color: var(--white);
+    }
+    
+    input::placeholder {
+      color: #aaa;
+    }
+    
+    /* Button */
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--warning) 0%, #c4bf4c 100%);
+      color: var(--primary);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(219, 213, 110, 0.3);
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(219, 213, 110, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--secondary);
+    }
+    
+    .loading::before {
+      content: "";
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e0e0e0;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Error Message */
+    .error-message {
+      color: var(--danger);
+      padding: 16px;
+      text-align: center;
+      background: #fff5f5;
+      border-radius: var(--radius);
+      border-left: 4px solid var(--danger);
+    }
+    
+    /* Back Link - pinned to left edge */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      /* anchor to viewport left */
+      position: fixed;
+      left: 16px;
+      top: 20px;
+      z-index: 1100;
+      padding: 6px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: color 0.2s, background 0.12s, transform 0.12s;
+      background: transparent;
+    }
+
+    .back-link:hover {
+      color: var(--secondary);
+      background: rgba(74,78,105,0.04);
+      transform: translateY(-1px);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 16px 12px 48px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .card {
+        padding: 20px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+      
+      th, td {
+        padding: 12px;
+        font-size: 0.9rem;
+      }
+      
+      .stat-number {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="page-header">
+      <h2>
+        <span>📦</span>
+        Inventory Management
+      </h2>
+      <p class="subtitle">Track and manage hostel inventory items</p>
+    </div>
+
+    <div class="stats-grid" id="stats-grid" style="display: none;">
+      <div class="stat-card">
+        <div class="stat-number" id="total-items">0</div>
+        <div class="stat-label">Total Items</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="total-quantity">0</div>
+        <div class="stat-label">Total Quantity</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="low-stock">0</div>
+        <div class="stat-label">Low Stock Items</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="total-used">0</div>
+        <div class="stat-label">Total Used</div>
+      </div>
+    </div>
+
+    <div class="card-layout">
+      <!-- Current Inventory Card -->
+      <div class="card card-teal">
+        <div class="card-header">
+          <span class="card-icon">📊</span>
+          <h3 class="card-title">Current Inventory</h3>
+        </div>
+        
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Usage</th>
+                <th>Last Updated</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-body">
+              <tr>
+                <td colspan="4">
+                  <div class="loading">Loading inventory data...</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Add Inventory Card -->
+      <div class="card card-yellow">
+        <div class="card-header">
+          <span class="card-icon">➕</span>
+          <h3 class="card-title">Add New Item</h3>
+        </div>
+        
+        <form id="add-inventory-form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="item">Item Name:</label>
+            <input type="text" id="item" placeholder="e.g., Ceiling Fan" required />
+          </div>
+
+          <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" placeholder="e.g., 5" min="1" required />
+          </div>
+
+          <button type="button" onclick="addInventory()">
+            <span>➕</span> Add to Inventory
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <a href="/warden_home.html" class="back-link">
+      <span>🔙</span> Back to Warden Home
+    </a>
+  </div>
+
+  <script>
+    let inventoryData = [];
+
+    function getQuantityClass(quantity) {
+      if (quantity >= 10) return 'quantity-high';
+      if (quantity >= 5) return 'quantity-medium';
+      return 'quantity-low';
+    }
+
+    function updateStats() {
+      const totalItems = inventoryData.length;
+      const totalQuantity = inventoryData.reduce((sum, item) => sum + item.Quantity, 0);
+      const lowStock = inventoryData.filter(item => item.Quantity < 5).length;
+      // Calculate total used (field may be 'Used' or 'Usage' depending on backend)
+      const totalUsed = inventoryData.reduce((sum, item) => {
+        const used = (item.Used != null) ? item.Used : (item.Usage != null ? item.Usage : 0);
+        return sum + (Number(used) || 0);
+      }, 0);
+
+      document.getElementById('total-items').textContent = totalItems;
+      document.getElementById('total-quantity').textContent = totalQuantity;
+      document.getElementById('low-stock').textContent = lowStock;
+      document.getElementById('total-used').textContent = totalUsed;
+
+      if (totalItems > 0) {
+        document.getElementById('stats-grid').style.display = 'grid';
+      }
+    }
+
+    function fetchInventory() {
+      fetch('/get_warden_inventory', { credentials: 'include' })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Error: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          inventoryData = data;
+          const tbody = document.getElementById('inventory-body');
+          tbody.innerHTML = '';
+          
+          if (data.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="3">
+                  <div class="empty-state">
+                    <div class="empty-icon">📦</div>
+                    <p class="empty-text">No inventory items found</p>
+                    <p class="empty-subtext">Add items using the form on the right</p>
+                  </div>
+                </td>
+              </tr>
+            `;
+            document.getElementById('stats-grid').style.display = 'none';
+            return;
+          }
+          
+          data.forEach(row => {
+            const tr = document.createElement('tr');
+            const lastUpdated = row.Last_Updated ? 
+              new Date(row.Last_Updated).toLocaleString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              }) : 'N/A';
+            
+            const quantityClass = getQuantityClass(row.Quantity);
+
+            // Determine usage value (backend might send Used or Usage)
+            const usageVal = (row.Used != null) ? row.Used : (row.Usage != null ? row.Usage : null);
+            const usageDisplay = (usageVal == null) ? 'N/A' : `${usageVal} used`;
+            
+            tr.innerHTML = `
+              <td><strong>${row.Item_Name}</strong></td>
+              <td><span class="quantity-badge ${quantityClass}">${row.Quantity} units</span></td>
+              <td>${usageDisplay}</td>
+              <td>${lastUpdated}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+          updateStats();
+        })
+        .catch(err => {
+          console.error("Error fetching inventory:", err);
+          document.getElementById('inventory-body').innerHTML = `
+            <tr>
+              <td colspan="4">
+                <div class="error-message">
+                  ⚠️ Error loading inventory data. Please try again.
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+    }
+
+    function addInventory() {
+      const item = document.getElementById('item').value.trim();
+      const quantity = document.getElementById('quantity').value.trim();
+
+      if (!item || !quantity) {
+        alert("⚠️ Please enter both item name and quantity.");
+        return;
+      }
+
+      if (parseInt(quantity) < 1) {
+        alert("⚠️ Quantity must be at least 1.");
+        return;
+      }
+      
+      const button = document.querySelector('button');
+      const originalButtonText = button.innerHTML;
+      button.innerHTML = '⏳ Adding...';
+      button.disabled = true;
+
+      fetch('/add_inventory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ itemName: item, quantity: parseInt(quantity) })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert('✅ ' + (data.message || "Inventory added successfully!"));
+        document.getElementById('item').value = "";
+        document.getElementById('quantity').value = "";
+        fetchInventory();
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        alert("❌ Something went wrong while adding inventory!");
+      })
+      .finally(() => {
+        button.innerHTML = originalButtonText;
+        button.disabled = false;
+      });
+    }
+
+    // On load, fetch current inventory
+    document.addEventListener('DOMContentLoaded', fetchInventory);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Pending Room Transfer Requests</h2>
+<div id="requests"></div>
+
+<script>
+async function loadRequests() {
+  const res = await fetch('/warden_transfer_requests');
+  const data = await res.json();
+
+  const container = document.getElementById('requests');
+  container.innerHTML = data.map(req => `
+    <div class="card">
+      <p><strong>Student:</strong> ${req.Student_ID}</p>
+      <p><strong>Reason:</strong> ${req.Reason}</p>
+      <p><strong>Request Date:</strong> ${req.Request_Date}</p>
+      <select id="status-${req.Request_ID}">
+        <option value="">--Select Action--</option>
+        <option value="Approved">Approve</option>
+        <option value="Rejected">Reject</option>
+      </select>
+      <button onclick="submitDecision(${req.Request_ID})">Submit</button>
+    </div>
+  `).join('');
+}
+
+async function submitDecision(requestID) {
+  const status = document.getElementById(`status-${requestID}`).value;
+  if (!status) return alert("Select a status first.");
+
+  const res = await fetch('/w_handle_transfer', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requestID, status })
+  });
+
+  const data = await res.json();
+  alert(data.message);
+  loadRequests();
+}
+
+loadRequests();
+</script>
+</body>
+</html>

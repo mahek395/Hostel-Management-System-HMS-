@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Attendance</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f5f1ed;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    /* Header with logo */
+    .header {
+      background-color: white;
+      padding: 15px 30px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #7dd3c0 0%, #5fb8a6 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .header-title {
+      font-size: 18px;
+      color: #2d3748;
+      font-weight: 500;
+    }
+
+    /* Main content container */
+    .container {
+      max-width: 900px;
+      margin: 100px auto 40px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 42px;
+      color: #2d3748;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .title-underline {
+      width: 150px;
+      height: 4px;
+      background: linear-gradient(90deg, #7dd3c0 0%, #ff6b6b 100%);
+      margin: 0 auto 50px;
+      border-radius: 2px;
+    }
+
+    /* Back button */
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      color: #764ba2;
+      transform: translateX(-4px);
+    }
+
+    /* Calendar card */
+    .calendar-card {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 28px;
+      color: #2d3748;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 0 20px;
+    }
+
+    .calendar-header button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .calendar-header button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .calendar-header button:active {
+      transform: scale(0.95);
+    }
+
+    #monthYear {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .day, .weekday {
+      background: #f7fafc;
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 500;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .weekday {
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      min-height: 50px;
+    }
+
+    .day.empty {
+      background: transparent;
+    }
+
+    .present {
+      background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%);
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(129, 199, 132, 0.3);
+    }
+
+    .absent {
+      background: linear-gradient(135deg, #e57373 0%, #ef5350 100%);
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(229, 115, 115, 0.3);
+    }
+
+    .onleave {
+      background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(100, 181, 246, 0.3);
+    }
+
+    .day.present:hover,
+    .day.absent:hover,
+    .day.onleave:hover {
+      transform: scale(1.05);
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 2px solid #e2e8f0;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legend-color {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .legend-color.present {
+      background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%);
+    }
+
+    .legend-color.absent {
+      background: linear-gradient(135deg, #e57373 0%, #ef5350 100%);
+    }
+
+    .legend-color.onleave {
+      background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+    }
+
+    .legend-text {
+      font-size: 14px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+
+    /* Loading state */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #718096;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e2e8f0;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 80px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      .calendar-card {
+        padding: 30px 20px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .calendar {
+        gap: 8px;
+      }
+
+      .day, .weekday {
+        padding: 12px 8px;
+        font-size: 14px;
+        min-height: 50px;
+      }
+
+      .weekday {
+        min-height: 40px;
+        font-size: 12px;
+      }
+
+      #monthYear {
+        font-size: 20px;
+      }
+
+      .legend {
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">HMS</div>
+    <span class="header-title">Hostel Management System</span>
+  </div>
+
+  <div class="container">
+    <a href="home.html" class="back-button">
+      ← Back to Dashboard
+    </a>
+
+    <h1>My Attendance</h1>
+    <div class="title-underline"></div>
+
+    <div class="calendar-card">
+      <h2>📅 Attendance Calendar</h2>
+      
+      <div class="calendar-header">
+        <button onclick="prevMonth()" aria-label="Previous month">◀</button>
+        <span id="monthYear"></span>
+        <button onclick="nextMonth()" aria-label="Next month">▶</button>
+      </div>
+      
+      <div class="calendar" id="calendar">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <p>Loading attendance data...</p>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color present"></div>
+          <span class="legend-text">Present</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color absent"></div>
+          <span class="legend-text">Absent</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color onleave"></div>
+          <span class="legend-text">On Leave</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const calendar = document.getElementById('calendar');
+    const monthYearLabel = document.getElementById('monthYear');
+    let currentDate = new Date();
+    let attendanceData = {}; // { '2025-04-11': 'Present', ... }
+
+    function loadAttendanceAndRender() {
+      fetch('/student_attendance', { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+          attendanceData = {};
+          data.forEach(entry => {
+            attendanceData[entry.Date] = entry.Status;
+          });
+          renderCalendar();
+        })
+        .catch(err => {
+          console.error('Error loading attendance:', err);
+          calendar.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #e53e3e;">
+              <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+              <p>Error loading attendance data. Please refresh the page.</p>
+            </div>
+          `;
+        });
+    }
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      monthYearLabel.textContent = `${currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
+
+      calendar.innerHTML = '';
+
+      // Add weekday headers
+      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => {
+        const div = document.createElement('div');
+        div.className = 'weekday';
+        div.textContent = d;
+        calendar.appendChild(div);
+      });
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startDay = firstDay.getDay();
+
+      // Add empty slots for previous month days
+      for (let i = 0; i < startDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'day empty';
+        calendar.appendChild(empty);
+      }
+
+      // Add days with status
+      for (let day = 1; day <= lastDay.getDate(); day++) {
+        const dateObj = new Date(year, month, day);
+        const dateStr = dateObj.toISOString().split('T')[0];
+
+        const div = document.createElement('div');
+        div.className = 'day';
+        div.textContent = day;
+
+        const status = attendanceData[dateStr];
+        if (status === 'Present') div.classList.add('present');
+        else if (status === 'Absent') div.classList.add('absent');
+        else if (status === 'On Leave') div.classList.add('onleave');
+
+        calendar.appendChild(div);
+      }
+    }
+
+    function prevMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    }
+
+    // Initial load
+    loadAttendanceAndRender();
+  </script>
+</body>
+</html>

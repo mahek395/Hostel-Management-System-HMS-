@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warden Dashboard - Hostel Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #22223b;
+            --secondary: #4a4e69;
+            --accent: #9a8c98;
+            --bg: #f2e9e4;
+            --white: #fff;
+            --success: #38b000;
+            --warning: #DBD56E;
+            --danger: #FC7753;
+            --info: #66D7D1;
+            --radius: 12px;
+            --shadow: 0 2px 12px rgba(34, 34, 59, 0.08);
+            --shadow-hover: 0 8px 24px rgba(34, 34, 59, 0.15);
+            --font: 'Poppins', 'Segoe UI', Arial, sans-serif;
+            --font-secondary: 'Montserrat', sans-serif;
+        }
+        
+        /* Global Reset */
+        *, *:before, *:after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Base Styles */
+        body {
+            font-family: var(--font);
+            background-color: var(--bg);
+            color: var(--primary);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Header Area */
+        .header {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+            padding: 20px 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #66D7D1 0%, #FC7753 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(74, 78, 105, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo-icon::before {
+            content: "";
+            position: absolute;
+            width: 80%;
+            height: 70%;
+            background-color: white;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .logo-icon::after {
+            content: "HMS";
+            position: relative;
+            z-index: 2;
+            font-family: var(--font-secondary);
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--primary);
+        }
+        
+        .logo-text {
+            font-family: var(--font-secondary);
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .logo-subtitle {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 400;
+        }
+        
+        /* User Profile Dropdown */
+        .user-profile {
+            position: relative;
+        }
+        
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+            background: #f8f8f8;
+        }
+        
+        .profile-trigger:hover {
+            background: #f0f0f0;
+        }
+        
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--white);
+            flex-shrink: 0;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary);
+        }
+        
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+        
+        .dropdown-icon {
+            margin-left: 4px;
+            transition: transform 0.2s ease;
+            color: var(--accent);
+        }
+        
+        .user-profile.active .dropdown-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Dropdown Menu */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 20px rgba(34, 34, 59, 0.15);
+            min-width: 240px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+        
+        .user-profile.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu::before {
+            content: "";
+            position: absolute;
+            top: -8px;
+            right: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid white;
+        }
+
+        .profile-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fafafa;
+        }
+
+        .profile-header p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .profile-header strong {
+            font-size: 1rem;
+            color: var(--primary);
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font);
+            font-size: 0.95rem;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f8f8;
+        }
+        
+        .dropdown-item.logout {
+            color: var(--danger);
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .dropdown-item.logout:hover {
+            background: #fff5f5;
+        }
+        
+        .dropdown-item span:first-child {
+            font-size: 1.2rem;
+        }
+        
+        /* Page Title */
+        .page-title {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-family: var(--font-secondary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: var(--accent);
+            font-weight: 400;
+        }
+        
+        /* Dashboard Grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            text-decoration: none;
+            color: var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        
+        .dashboard-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(154, 140, 152, 0.2);
+        }
+        
+        .dashboard-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 16px;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+        
+        .dashboard-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+        
+        .dashboard-card:hover .card-title {
+            color: var(--secondary);
+        }
+        
+        .card-description {
+            font-size: 0.9rem;
+            color: var(--accent);
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        /* Card Color Variants */
+        .dashboard-card:nth-child(1) .card-icon { color: #5B9BD5; }
+        .dashboard-card:nth-child(2) .card-icon { color: #70AD47; }
+        .dashboard-card:nth-child(3) .card-icon { color: #FFC000; }
+        .dashboard-card:nth-child(4) .card-icon { color: #ED7D31; }
+        .dashboard-card:nth-child(5) .card-icon { color: #9D65C9; }
+        .dashboard-card:nth-child(6) .card-icon { color: #4BACC6; }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 20px;
+            }
+            
+            .profile-trigger {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .dropdown-menu {
+                right: auto;
+                left: 0;
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .dashboard {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 16px;
+                padding: 0;
+            }
+            
+            .dashboard-card {
+                min-height: 180px;
+                padding: 24px 20px;
+            }
+            
+            .card-icon {
+                font-size: 3rem;
+            }
+            
+            .card-title {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-card {
+                min-height: 160px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .logo-text {
+                font-size: 1rem;
+            }
+            
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+        }
+        
+        /* Animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .dashboard-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        
+        .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+        .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+        .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+        .dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+        .dashboard-card:nth-child(5) { animation-delay: 0.5s; }
+        .dashboard-card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Header with Logo and User Profile -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <div>
+                <div class="logo-text">Hostel Management System</div>
+                <div class="logo-subtitle">Warden Portal</div>
+            </div>
+        </div>
+        
+        <div class="user-profile" id="userProfile">
+            <div class="profile-trigger" onclick="toggleDropdown()">
+                <div class="user-avatar">👤</div>
+                <div class="user-info">
+                    <div class="user-name" id="wardenName">Warden</div>
+                    <div class="user-role" id="wardenHostel">Administrator</div>
+                </div>
+                <span class="dropdown-icon">▼</span>
+            </div>
+            
+            <div class="dropdown-menu">
+                <div class="profile-header">
+                    <p><strong id="profileWardenName">Loading...</strong></p>
+                    <p>Warden ID: <span id="profileWardenId">Loading...</span></p>
+                    <p>Hostel: <span id="profileHostelName">Loading...</span></p>
+                </div>
+                <button class="dropdown-item logout" onclick="logout()">
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-title">
+        <h1>Welcome to Warden Dashboard</h1>
+        <p class="subtitle">Manage your hostel operations efficiently</p>
+    </div>
+
+    <div class="dashboard">
+        <a href="room_status.html" class="dashboard-card">
+            <div class="card-icon">🏠</div>
+            <div class="card-title">Rooms</div>
+            <div class="card-description">Manage room allocations and occupancy</div>
+        </a>
+        
+        <a href="w_attendance.html" class="dashboard-card">
+            <div class="card-icon">📋</div>
+            <div class="card-title">Attendance</div>
+            <div class="card-description">Track student attendance records</div>
+        </a>
+        
+        <a href="w_complaints.html" class="dashboard-card">
+            <div class="card-icon">📢</div>
+            <div class="card-title">Complaints</div>
+            <div class="card-description">Review and resolve student complaints</div>
+        </a>
+        
+        <a href="w_visitors.html" class="dashboard-card">
+            <div class="card-icon">👥</div>
+            <div class="card-title">Visitors</div>
+            <div class="card-description">Manage visitor logs and approvals</div>
+        </a>
+        
+        <a href="w_leaves.html" class="dashboard-card">
+            <div class="card-icon">🏖️</div>
+            <div class="card-title">Leaves</div>
+            <div class="card-description">Approve and track leave requests</div>
+        </a>
+        
+        <a href="w_inventory.html" class="dashboard-card">
+            <div class="card-icon">📦</div>
+            <div class="card-title">Inventory</div>
+            <div class="card-description">Monitor hostel inventory and supplies</div>
+        </a>
+    </div>
+
+    <script>
+        // Toggle dropdown menu
+        function toggleDropdown() {
+            const userProfile = document.getElementById('userProfile');
+            userProfile.classList.toggle('active');
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userProfile = document.getElementById('userProfile');
+            if (!userProfile.contains(event.target)) {
+                userProfile.classList.remove('active');
+            }
+        });
+        
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem("warden_id");
+                localStorage.removeItem("warden_name");
+                
+                fetch("/logout", {
+                    method: "POST",
+                    credentials: "include"
+                })
+                    .then(() => window.location.href = "/login.html")
+                    .catch(() => window.location.href = "/login.html");
+            }
+        }
+        
+        // Load warden data on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            // Small delay to ensure session is established
+            setTimeout(() => {
+                fetch("/get_warden_data", {
+                    method: "GET",
+                    credentials: "include",
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                    .then(response => {
+                        console.log("Response status:", response.status);
+                        if (!response.ok) {
+                            throw new Error('Not authenticated');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Received warden data:", data);
+                        
+                        // Update header with warden name
+                        if (data.name) {
+                            document.getElementById("wardenName").textContent = data.name;
+                            document.getElementById("profileWardenName").textContent = data.name;
+                            localStorage.setItem("warden_name", data.name);
+                        }
+
+                        // Update warden ID
+                        if (data.wardenID) {
+                            document.getElementById("profileWardenId").textContent = data.wardenID;
+                            localStorage.setItem("warden_id", data.wardenID);
+                        }
+
+                        // Update hostel info
+                        if (data.hostelName) {
+                            document.getElementById("wardenHostel").textContent = data.hostelName;
+                            document.getElementById("profileHostelName").textContent = data.hostelName;
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching warden data:", error);
+                        alert("Session expired. Please login again.");
+                        window.location.href = "/login.html";
+                    });
+            }, 100);
+        });
+    </script>
+</body>
+</html>

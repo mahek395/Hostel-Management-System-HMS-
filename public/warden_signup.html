@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Warden Signup - Hostel Management System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* 
+     * Hostel Management System - Warden Signup Page Styles
+     * Color Palette: #DBD56E, #403D58, #66D7D1, #FC7753, #F2EFEA
+     */
+    
+    /* CSS Variables - Color Palette */
+    :root {
+        /* Main Colors */
+        --yellow: #DBD56E;
+        --dark-purple: #403D58;
+        --teal: #66D7D1;
+        --coral: #FC7753;
+        --off-white: #F2EFEA;
+        
+        /* Shades and Tints */
+        --yellow-light: #e5e093;
+        --yellow-dark: #c4bf4c;
+        --purple-light: #56527a;
+        --purple-dark: #2e2c40;
+        --teal-light: #8ce3df;
+        --teal-dark: #42c5be;
+        --coral-light: #fd9478;
+        --coral-dark: #fb5a2e;
+        --off-white-light: #ffffff;
+        --off-white-dark: #dbd6cc;
+        
+        /* Font Families */
+        --font-primary: 'Poppins', sans-serif;
+        --font-secondary: 'Montserrat', sans-serif;
+        
+        /* Spacing */
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-md: 1rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2.5rem;
+        
+        /* Border Radius */
+        --border-radius-sm: 4px;
+        --border-radius-md: 8px;
+        --border-radius-lg: 16px;
+        
+        /* Box Shadow */
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+        
+        /* Transitions */
+        --transition-fast: 0.2s ease;
+        --transition-normal: 0.3s ease;
+    }
+    
+    /* Global Reset */
+    *, *:before, *:after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    /* Base Styles */
+    body {
+        font-family: var(--font-primary);
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--dark-purple);
+        background-color: var(--off-white);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-image: 
+            linear-gradient(135deg, rgba(64, 61, 88, 0.05) 0%, rgba(219, 213, 110, 0.1) 100%),
+            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FC7753' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        padding: var(--spacing-md);
+    }
+    
+    /* Page Title */
+    h2 {
+        font-family: var(--font-secondary);
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--dark-purple);
+        margin-bottom: var(--spacing-lg);
+        text-align: center;
+        position: relative;
+        padding-bottom: var(--spacing-sm);
+    }
+    
+    h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(to right, var(--coral), var(--teal));
+        border-radius: 3px;
+    }
+
+    /* Form Container */
+    #wardenSignupForm {
+        width: 100%;
+        max-width: 420px;
+        background-color: white;
+        padding: var(--spacing-xl);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow-lg);
+        animation: slideUp 0.5s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    #wardenSignupForm::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(to right, var(--coral), var(--yellow));
+    }
+    
+    /* Form Inputs */
+    #wardenSignupForm input {
+        width: 100%;
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+        border: 1px solid #e0e0e0;
+        border-radius: var(--border-radius-md);
+        font-family: var(--font-primary);
+        font-size: 1rem;
+        color: var(--dark-purple);
+        transition: all var(--transition-fast);
+        background-color: var(--off-white-light);
+    }
+    
+    #wardenSignupForm input:focus {
+        outline: none;
+        border-color: var(--coral);
+        box-shadow: 0 0 0 3px rgba(252, 119, 83, 0.2);
+    }
+    
+    #wardenSignupForm input::placeholder {
+        color: #8a8a8a;
+        opacity: 0.7;
+    }
+    
+    /* Removing default browser input styling */
+    #wardenSignupForm input[type="number"]::-webkit-inner-spin-button,
+    #wardenSignupForm input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    #wardenSignupForm input[type="number"] {
+        -moz-appearance: textfield;
+    }
+    
+    /* Form Button */
+    #wardenSignupForm button {
+        width: 100%;
+        padding: var(--spacing-md);
+        background-color: var(--coral);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius-md);
+        font-family: var(--font-primary);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        margin-top: var(--spacing-sm);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    #wardenSignupForm button:hover {
+        background-color: var(--coral-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(252, 119, 83, 0.4);
+    }
+    
+    #wardenSignupForm button:active {
+        transform: translateY(0);
+    }
+    
+    /* Hover and Focus state for inputs */
+    #wardenSignupForm input:hover {
+        border-color: var(--yellow-dark);
+    }
+    
+    /* Back link for navigation */
+    .back-link {
+        margin-top: var(--spacing-lg);
+        text-align: center;
+        color: var(--purple-light);
+        text-decoration: none;
+        font-size: 0.9rem;
+        display: block;
+    }
+    
+    .back-link:hover {
+        color: var(--coral);
+        text-decoration: underline;
+    }
+    
+    /* Animations */
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Input Focus Animation */
+    @keyframes inputFocus {
+        0% { box-shadow: 0 0 0 0 rgba(252, 119, 83, 0.4); }
+        70% { box-shadow: 0 0 0 5px rgba(252, 119, 83, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(252, 119, 83, 0); }
+    }
+    
+    #wardenSignupForm input:focus {
+        animation: inputFocus 1s 1;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 480px) {
+        h2 {
+            font-size: 1.8rem;
+        }
+        
+        #wardenSignupForm {
+            padding: var(--spacing-lg);
+        }
+        
+        #wardenSignupForm input {
+            padding: 0.8rem;
+            margin-bottom: var(--spacing-md);
+        }
+    }
+    
+    /* Decorative Elements */
+    .form-decoration {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background-color: rgba(219, 213, 110, 0.1);
+        border-radius: 50%;
+        z-index: -1;
+    }
+    
+    .decoration-1 {
+        top: -75px;
+        right: -75px;
+    }
+    
+    .decoration-2 {
+        bottom: -75px;
+        left: -75px;
+        background-color: rgba(102, 215, 209, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <h2>Warden Signup</h2>
+  <form id="wardenSignupForm">
+    <input type="text" id="warden_id" placeholder="Warden ID (e.g., W123)" required>
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="text" id="phone_number" placeholder="Phone Number" required>
+    <input type="number" id="hostel_id" placeholder="Hostel ID" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Sign Up</button>
+  </form>
+  
+  <a href="/login.html" class="back-link">Already have an account? Login</a>
+  
+  <!-- Decorative elements -->
+  <div class="form-decoration decoration-1"></div>
+  <div class="form-decoration decoration-2"></div>
+
+  <script>
+    document.getElementById("wardenSignupForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const Warden_ID = document.getElementById("warden_id").value;
+      const Name = document.getElementById("name").value;
+      const Phone_Number = document.getElementById("phone_number").value;
+      const Hostel_ID = document.getElementById("hostel_id").value;
+      const password = document.getElementById("password").value;
+
+      const response = await fetch("http://localhost:3000/warden_signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ Warden_ID, Name, Phone_Number, Hostel_ID, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Warden registered successfully!");
+        window.location.href = "/login.html";
+      } else {
+        alert(data.message || "Signup failed.");
+      }
+    });
+  </script>
+</body>
+</html>

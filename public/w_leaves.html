@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warden - Leaves</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #22223b;
+      --secondary: #4a4e69;
+      --accent: #9a8c98;
+      --bg: #f2e9e4;
+      --white: #fff;
+      --success: #38b000;
+      --warning: #DBD56E;
+      --danger: #FC7753;
+      --info: #66D7D1;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(34, 34, 59, 0.08);
+      --shadow-hover: 0 4px 20px rgba(34, 34, 59, 0.12);
+      --font: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+    
+    /* Global Reset */
+    *, *:before, *:after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Base Styles */
+    body {
+      font-family: var(--font);
+      background-color: var(--bg);
+      color: var(--primary);
+      padding: 32px 16px 64px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 24px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .subtitle {
+      color: var(--secondary);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+    
+    /* Filter Bar */
+    .filter-bar {
+      background: var(--white);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .filter-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-bottom: 6px;
+    }
+    
+    .filter-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      border: 1px solid #e0e0e0;
+      background: #fafafa;
+      color: var(--primary);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+    
+    .filter-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(154, 140, 152, 0.1);
+    }
+    
+    /* Leave Cards Container */
+    #leaves-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    /* Leave Card */
+    .leave-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border-left: 4px solid var(--warning);
+    }
+    
+    .leave-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    
+    /* Card Header */
+    .leave-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .student-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .student-avatar {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--warning) 0%, #c4bf4c 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(219, 213, 110, 0.3);
+    }
+    
+    .student-details h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    
+    .student-id {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    
+    /* Status Badge */
+    .status-badge {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+    
+    .status-approved {
+      background: linear-gradient(135deg, #E6F9F0 0%, #CCF2DD 100%);
+      color: var(--success);
+    }
+    
+    .status-rejected {
+      background: linear-gradient(135deg, #FFE6E6 0%, #FFCCCC 100%);
+      color: var(--danger);
+    }
+    
+    .status-pending {
+      background: linear-gradient(135deg, #FFF4E6 0%, #FFE8CC 100%);
+      color: #CC8800;
+    }
+    
+    /* Date Range Section */
+    .date-range {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: linear-gradient(135deg, #FFF9E6 0%, #FFEDD5 100%);
+      padding: 16px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .date-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 120px;
+    }
+    
+    .date-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #c4bf4c;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .date-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .date-arrow {
+      font-size: 1.5rem;
+      color: var(--warning);
+      align-self: center;
+    }
+    
+    /* Duration Badge */
+    .duration-badge {
+      background: var(--white);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--secondary);
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Info Sections */
+    .info-section {
+      margin-bottom: 16px;
+    }
+    
+    .info-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .info-content {
+      background: #f8f8f8;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      color: var(--primary);
+      line-height: 1.6;
+    }
+    
+    .destination-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    
+    /* Approval Section */
+    .approval-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 2px solid #f0f0f0;
+      gap: 16px;
+    }
+    
+    .approval-label {
+      font-weight: 600;
+      color: var(--secondary);
+      font-size: 0.95rem;
+    }
+    
+    .approval-select {
+      padding: 10px 40px 10px 16px;
+      border-radius: var(--radius);
+      border: 2px solid #e0e0e0;
+      background: var(--white);
+      color: var(--primary);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%234a4e69' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      min-width: 160px;
+    }
+    
+    .approval-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(154, 140, 152, 0.1);
+    }
+    
+    .approval-select:hover {
+      border-color: var(--accent);
+    }
+    
+    /* Timestamp */
+    .timestamp {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-top: 12px;
+      font-style: italic;
+    }
+    
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--secondary);
+      font-size: 1.1rem;
+    }
+    
+    .loading::before {
+      content: "";
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e0e0e0;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+    
+    .empty-state-text {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+    
+    .empty-state-subtext {
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+    
+    /* Message Box */
+    #message {
+      background: var(--white);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      margin-top: 24px;
+      color: var(--secondary);
+    }
+    
+    /* Back Link - pinned to left edge (match other pages) */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      /* anchor to viewport left */
+      position: fixed;
+      left: 16px;
+      top: 20px;
+      z-index: 1100;
+      padding: 6px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: color 0.2s, background 0.12s, transform 0.12s;
+      background: transparent;
+    }
+
+    .back-link:hover {
+      color: var(--secondary);
+      background: rgba(74,78,105,0.04);
+      transform: translateY(-1px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 16px 12px 48px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .leave-card {
+        padding: 20px;
+      }
+      
+      .leave-header {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .status-badge {
+        align-self: flex-start;
+      }
+      
+      .date-range {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .date-arrow {
+        transform: rotate(90deg);
+        align-self: center;
+      }
+      
+      .date-item {
+        width: 100%;
+      }
+      
+      .approval-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .approval-select {
+        width: 100%;
+      }
+      
+      .filter-bar {
+        flex-direction: column;
+      }
+      
+      .filter-group {
+        width: 100%;
+      }
+    }
+    /* Small-screen tweak so fixed back button doesn't cover content */
+    @media (max-width: 420px) {
+      .back-link {
+        left: 10px;
+        top: 12px;
+        padding: 6px 8px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="page-header">
+    <h2>
+      <span>🏖️</span>
+      Leave Applications
+    </h2>
+    <p class="subtitle">Review and approve student leave requests</p>
+  </div>
+  
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>Filter by Status</label>
+      <select id="statusFilter" onchange="filterLeaves()">
+        <option value="all">All Applications</option>
+        <option value="pending">Pending Approval</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </div>
+  </div>
+  
+  <div id="leaves-container">
+    <div class="loading">Loading leave applications...</div>
+  </div>
+  
+  <div id="message" style="display: none;"></div>
+  
+  <a href="/warden_home.html" class="back-link">
+    <span>🔙</span> Back to Warden Home
+  </a>
+</div>
+
+<script>
+  let allLeaves = [];
+  
+  function calculateDuration(startDate, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/w_leaves', { credentials: 'include' })
+      .then(res => {
+        if (!res.ok) throw new Error("Unauthorized or error fetching leaves");
+        return res.json();
+      })
+      .then(data => {
+        const container = document.getElementById('leaves-container');
+        const message = document.getElementById('message');
+        container.innerHTML = '';
+        message.style.display = 'none';
+        
+        console.log("Leave data:", data);
+        
+        if (!Array.isArray(data) || data.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <p class="empty-state-text">No leave applications found</p>
+              <p class="empty-state-subtext">There are no leave requests at the moment.</p>
+            </div>
+          `;
+          return;
+        }
+  
+        allLeaves = data;
+        renderLeaves(data);
+      })
+      .catch(err => {
+        console.error("Error:", err.message);
+        const container = document.getElementById('leaves-container');
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <p class="empty-state-text">Error loading leave applications</p>
+            <p class="empty-state-subtext">${err.message}</p>
+          </div>
+        `;
+      });
+  });
+  
+  function renderLeaves(leaves) {
+    const container = document.getElementById('leaves-container');
+    container.innerHTML = '';
+    
+    if (leaves.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🔍</div>
+          <p class="empty-state-text">No leaves found</p>
+          <p class="empty-state-subtext">Try adjusting your filters.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    leaves.forEach(leave => {
+      const studentName = leave.Student_Name || 'Student';
+      const studentId = leave.Student_ID || 'N/A';
+      const fromDate = leave.Start_Date ? new Date(leave.Start_Date).toLocaleDateString('en-IN', {
+        day: '2-digit', month: 'short', year: 'numeric'
+      }) : 'N/A';
+      const toDate = leave.End_Date ? new Date(leave.End_Date).toLocaleDateString('en-IN', {
+        day: '2-digit', month: 'short', year: 'numeric'
+      }) : 'N/A';
+      const reason = leave.Reason || 'No reason provided';
+      const destination = leave.Destination || 'Not specified';
+      const applyTime = leave.Apply_Time ? new Date(leave.Apply_Time).toLocaleString('en-IN', {
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      }) : 'N/A';
+      const leaveId = leave.Leave_ID || '';
+      const wardenApproval = leave.Warden_Approval || 'Pending';
+      
+      const status = wardenApproval;
+      const statusClass = status === 'Approved' ? 'status-approved' : 
+                         status === 'Rejected' ? 'status-rejected' : 'status-pending';
+      
+      let initials = 'ST';
+      if (studentName && studentName !== 'Student') {
+        initials = studentName.split(' ')
+          .map(name => name[0])
+          .join('')
+          .toUpperCase()
+          .substring(0, 2);
+      }
+      
+      const duration = leave.Start_Date && leave.End_Date ? 
+        calculateDuration(leave.Start_Date, leave.End_Date) : '';
+      
+      const div = document.createElement('div');
+      div.className = 'leave-card';
+      
+      div.innerHTML = `
+        <div class="leave-header">
+          <div class="student-info">
+            <div class="student-avatar">${initials}</div>
+            <div class="student-details">
+              <h3>${studentName}</h3>
+              <span class="student-id">ID: ${studentId}</span>
+            </div>
+          </div>
+          <span class="status-badge ${statusClass}">${status}</span>
+        </div>
+        
+        <div class="date-range">
+          <div class="date-item">
+            <div class="date-label">From</div>
+            <div class="date-value">${fromDate}</div>
+          </div>
+          
+          <span class="date-arrow">→</span>
+          
+          <div class="date-item">
+            <div class="date-label">To</div>
+            <div class="date-value">${toDate}</div>
+          </div>
+          
+          ${duration ? `<div class="duration-badge">📅 ${duration}</div>` : ''}
+        </div>
+        
+        <div class="info-section">
+          <div class="info-label">
+            <span>📝</span>
+            Reason for Leave
+          </div>
+          <div class="info-content">${reason}</div>
+        </div>
+        
+        <div class="info-section">
+          <div class="info-label">
+            <span>📍</span>
+            Destination
+          </div>
+          <div class="info-content destination-content">
+            ${destination}
+          </div>
+        </div>
+        
+        <div class="approval-section">
+          <div class="approval-label">Approval Status:</div>
+          <select class="approval-select" onchange="updateLeaveStatus('${leaveId}', this.value)">
+            <option value="">Select Action</option>
+            <option value="Approved" ${wardenApproval === 'Approved' ? 'selected' : ''}>✓ Approve</option>
+            <option value="Rejected" ${wardenApproval === 'Rejected' ? 'selected' : ''}>✗ Reject</option>
+          </select>
+        </div>
+        
+        <div class="timestamp">
+          <span>🕐</span>
+          Applied on: ${applyTime}
+        </div>
+      `;
+      
+      container.appendChild(div);
+    });
+  }
+  
+  function filterLeaves() {
+    const filter = document.getElementById('statusFilter').value;
+    
+    let filtered = allLeaves;
+    if (filter !== 'all') {
+      if (filter === 'pending') {
+        filtered = allLeaves.filter(l => !l.Warden_Approval || l.Warden_Approval === 'Pending');
+      } else {
+        filtered = allLeaves.filter(l => l.Warden_Approval === filter);
+      }
+    }
+    
+    renderLeaves(filtered);
+  }
+
+  function updateLeaveStatus(leaveID, status) {
+    if (!status) return;
+    
+    fetch(`/update_leave_approval/${leaveID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ status })
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert('✅ ' + (data.message || "Leave status updated"));
+      
+      // Update local data
+      const leave = allLeaves.find(l => l.Leave_ID === leaveID);
+      if (leave) {
+        leave.Warden_Approval = status;
+        filterLeaves();
+      }
+    })
+    .catch(err => {
+      console.error("Error updating leave status:", err);
+      alert("❌ Error updating leave status");
+    });
+  }
+</script>
+</body>
+</html>

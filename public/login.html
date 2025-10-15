@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Hostel Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 
+         * Hostel Management System - Login Page Styles
+         * Color Palette: #DBD56E, #403D58, #66D7D1, #FC7753, #F2EFEA
+         */
+        
+        /* CSS Variables - Color Palette */
+        :root {
+            /* Main Colors */
+            --yellow: #DBD56E;
+            --dark-purple: #403D58;
+            --teal: #66D7D1;
+            --coral: #FC7753;
+            --off-white: #F2EFEA;
+            
+            /* Shades and Tints */
+            --yellow-light: #e5e093;
+            --yellow-dark: #c4bf4c;
+            --purple-light: #56527a;
+            --purple-dark: #2e2c40;
+            --teal-light: #8ce3df;
+            --teal-dark: #42c5be;
+            --coral-light: #fd9478;
+            --coral-dark: #fb5a2e;
+            --off-white-light: #ffffff;
+            --off-white-dark: #dbd6cc;
+            
+            /* Font Families */
+            --font-primary: 'Poppins', sans-serif;
+            --font-secondary: 'Montserrat', sans-serif;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2.5rem;
+            
+            /* Border Radius */
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 16px;
+            
+            /* Box Shadow */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+            
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+        }
+        
+        /* Global Reset */
+        *, *:before, *:after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Base Styles */
+        body {
+            font-family: var(--font-primary);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--dark-purple);
+            background-color: var(--off-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(102, 215, 209, 0.1) 0%, rgba(64, 61, 88, 0.07) 90%),
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23dbd56e' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            padding: var(--spacing-md);
+        }
+        
+        /* Logo/Header Area */
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--teal) 0%, var(--coral) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-md);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-logo::before {
+            content: "";
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            background-color: white;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .login-logo::after {
+            content: "HMS";
+            position: relative;
+            z-index: 2;
+            font-family: var(--font-secondary);
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--dark-purple);
+        }
+        
+        /* Page Title */
+        h2 {
+            font-family: var(--font-secondary);
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--dark-purple);
+            margin-bottom: var(--spacing-xs);
+            text-align: center;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: var(--purple-light);
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        /* Form Container */
+        #loginForm {
+            width: 100%;
+            max-width: 380px;
+            background-color: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            animation: zoomIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #loginForm::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--teal), var(--yellow), var(--coral));
+        }
+        
+        /* Form Inputs */
+        #loginForm input {
+            width: 100%;
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+            color: var(--dark-purple);
+        }
+        
+        #loginForm input:focus {
+            outline: none;
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(219, 213, 110, 0.2);
+        }
+        
+        /* Form Button */
+        #loginForm button {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: linear-gradient(to right, var(--teal), var(--teal-dark));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        #loginForm button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, var(--teal-dark), var(--coral));
+            transition: all 0.6s ease;
+            z-index: -1;
+        }
+        
+        #loginForm button:hover::before {
+            left: 0;
+        }
+        
+        #loginForm button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 215, 209, 0.4);
+        }
+        
+        #loginForm button:active {
+            transform: translateY(0);
+        }
+        
+        /* Sign up options */
+        .signup-options {
+            margin-top: var(--spacing-xl);
+            text-align: center;
+        }
+        
+        .signup-options p {
+            margin-bottom: var(--spacing-sm);
+            color: var(--purple-light);
+            font-size: 0.9rem;
+        }
+        
+        .signup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-sm);
+        }
+        
+        .signup-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--border-radius-md);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all var(--transition-fast);
+            flex: 1;
+            text-align: center;
+            max-width: 150px;
+        }
+        
+        .student-btn {
+            background-color: var(--yellow-light);
+            color: var(--dark-purple);
+            border: 1px solid var(--yellow);
+        }
+        
+        .student-btn:hover {
+            background-color: var(--yellow);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(219, 213, 110, 0.4);
+        }
+        
+        .warden-btn {
+            background-color: var(--coral-light);
+            color: white;
+            border: 1px solid var(--coral);
+        }
+        
+        .warden-btn:hover {
+            background-color: var(--coral);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(252, 119, 83, 0.4);
+        }
+        
+        /* Animations */
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Input Focus Animation */
+        @keyframes inputFocus {
+            0% { box-shadow: 0 0 0 0 rgba(219, 213, 110, 0.4); }
+            70% { box-shadow: 0 0 0 5px rgba(219, 213, 110, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(219, 213, 110, 0); }
+        }
+        
+        #loginForm input:focus {
+            animation: inputFocus 1s 1;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 2rem;
+            }
+            
+            #loginForm {
+                padding: var(--spacing-lg);
+            }
+            
+            .signup-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .signup-btn {
+                width: 100%;
+                max-width: 200px;
+                margin-bottom: var(--spacing-xs);
+            }
+            
+            .login-logo {
+                width: 70px;
+                height: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-header">
+        <div class="login-logo"></div>
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Login to access your Hostel Management System</p>
+    </div>
+    
+    <form id="loginForm">
+        <input type="text" id="studentId" placeholder="ID (Student or Warden)" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    
+    <div class="signup-options">
+        <p>Don't have an account?</p>
+        <div class="signup-buttons">
+            <a href="/signup.html" class="signup-btn student-btn">Student Signup</a>
+            <a href="/warden_signup.html" class="signup-btn warden-btn">Warden Signup</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const student_Id = document.getElementById("studentId").value;
+            const password = document.getElementById("password").value;
+
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({ student_Id, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem("student_Id", student_Id);
+
+                if (data.userType === "warden") {
+                    window.location.href = "/warden_home.html";
+                } else {
+                    window.location.href = "/home.html";
+                }
+            } else {
+                alert(data.message || "Login failed.");
+            }
+        });
+    </script>
+</body>
+</html>

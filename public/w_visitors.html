@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warden - Visitors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #22223b;
+      --secondary: #4a4e69;
+      --accent: #9a8c98;
+      --bg: #f2e9e4;
+      --white: #fff;
+      --success: #38b000;
+      --warning: #DBD56E;
+      --danger: #FC7753;
+      --info: #66D7D1;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(34, 34, 59, 0.08);
+      --shadow-hover: 0 4px 20px rgba(34, 34, 59, 0.12);
+      --font: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+    
+    /* Global Reset */
+    *, *:before, *:after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Base Styles */
+    body {
+      font-family: var(--font);
+      background-color: var(--bg);
+      color: var(--primary);
+      padding: 32px 16px 64px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 24px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    .subtitle {
+      color: var(--secondary);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+    
+    /* Filter Bar */
+    .filter-bar {
+      background: var(--white);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .filter-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-bottom: 6px;
+    }
+    
+    .filter-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      border: 1px solid #e0e0e0;
+      background: #fafafa;
+      color: var(--primary);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+    
+    .filter-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(154, 140, 152, 0.1);
+    }
+    
+    /* Visitors Container */
+    #visitors-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    /* Visitor Card */
+    .visitor-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border-left: 4px solid var(--accent);
+    }
+    
+    .visitor-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    
+    /* Visitor Header */
+    .visitor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .visitor-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .visitor-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--info) 0%, var(--accent) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--white);
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(102, 215, 209, 0.3);
+    }
+    
+    .visitor-details h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    
+    .visitor-id-proof {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    
+    /* Status Badge */
+    .status-badge {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+    
+    .status-approved {
+      background: linear-gradient(135deg, #E6F9F0 0%, #CCF2DD 100%);
+      color: var(--success);
+    }
+    
+    .status-rejected {
+      background: linear-gradient(135deg, #FFE6E6 0%, #FFCCCC 100%);
+      color: var(--danger);
+    }
+    
+    .status-pending {
+      background: linear-gradient(135deg, #FFF4E6 0%, #FFE8CC 100%);
+      color: #CC8800;
+    }
+    
+    /* Visitor Info Grid */
+    .visitor-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .info-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .info-value {
+      font-size: 0.95rem;
+      color: var(--primary);
+      font-weight: 500;
+    }
+    
+    /* Purpose Section */
+    .purpose-section {
+      background: #f8f8f8;
+      padding: 16px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+    }
+    
+    .purpose-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .purpose-value {
+      font-size: 0.95rem;
+      color: var(--primary);
+      line-height: 1.6;
+    }
+    
+    /* Approval Section */
+    .approval-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 2px solid #f0f0f0;
+      gap: 16px;
+    }
+    
+    .approval-label {
+      font-weight: 600;
+      color: var(--secondary);
+      font-size: 0.95rem;
+    }
+    
+    .approval-select {
+      padding: 10px 40px 10px 16px;
+      border-radius: var(--radius);
+      border: 2px solid #e0e0e0;
+      background: var(--white);
+      color: var(--primary);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%234a4e69' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      min-width: 160px;
+    }
+    
+    .approval-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(154, 140, 152, 0.1);
+    }
+    
+    .approval-select:hover {
+      border-color: var(--accent);
+    }
+    
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--secondary);
+      font-size: 1.1rem;
+    }
+    
+    .loading::before {
+      content: "";
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e0e0e0;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+    
+    .empty-state-text {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      margin-bottom: 8px;
+    }
+    
+    .empty-state-subtext {
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+    
+    /* Message Box */
+    #message {
+      background: var(--white);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      margin-top: 24px;
+      color: var(--secondary);
+    }
+    
+    /* Back Link - pinned to left edge */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      /* anchor to viewport left */
+      position: fixed;
+      left: 16px;
+      top: 20px;
+      z-index: 1100;
+      padding: 6px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: color 0.2s, background 0.12s, transform 0.12s;
+      background: transparent;
+    }
+
+    .back-link:hover {
+      color: var(--secondary);
+      background: rgba(74,78,105,0.04);
+      transform: translateY(-1px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 16px 12px 48px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .visitor-card {
+        padding: 20px;
+      }
+      
+      .visitor-header {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .status-badge {
+        align-self: flex-start;
+      }
+      
+      .visitor-info-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      
+      .approval-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .approval-select {
+        width: 100%;
+      }
+      
+      .filter-bar {
+        flex-direction: column;
+      }
+      
+      .filter-group {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="page-header">
+    <h2>
+      <span>👥</span>
+      Visitor Logs
+    </h2>
+    <p class="subtitle">Manage and approve visitor requests</p>
+  </div>
+  
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>Filter by Status</label>
+      <select id="statusFilter" onchange="filterVisitors()">
+        <option value="all">All Visitors</option>
+        <option value="pending">Pending Approval</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </div>
+  </div>
+  
+  <div id="visitors-container">
+    <div class="loading">Loading visitor logs...</div>
+  </div>
+  
+  <div id="message" style="display: none;"></div>
+  
+  <a href="/warden_home.html" class="back-link">
+    <span>🔙</span> Back to Warden Home
+  </a>
+</div>
+
+<script>
+  let allVisitors = [];
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/w_visitors', { credentials: 'include' })
+      .then(res => {
+        if (!res.ok) throw new Error("Unauthorized or error fetching visitors");
+        return res.json();
+      })
+      .then(data => {
+        console.log("Visitor logs received:", data);
+
+        const container = document.getElementById('visitors-container');
+        const message = document.getElementById('message');
+        container.innerHTML = '';
+        message.style.display = 'none';
+
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid data format received from server");
+        }
+
+        if (data.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <p class="empty-state-text">No visitor logs found</p>
+              <p class="empty-state-subtext">There are no visitor requests at the moment.</p>
+            </div>
+          `;
+          return;
+        }
+
+        allVisitors = data;
+        renderVisitors(data);
+      })
+      .catch(err => {
+        console.error("Error:", err.message);
+        const container = document.getElementById('visitors-container');
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <p class="empty-state-text">Error loading visitor logs</p>
+            <p class="empty-state-subtext">${err.message}</p>
+          </div>
+        `;
+      });
+  });
+  
+  function renderVisitors(visitors) {
+    const container = document.getElementById('visitors-container');
+    container.innerHTML = '';
+    
+    if (visitors.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🔍</div>
+          <p class="empty-state-text">No visitors found</p>
+          <p class="empty-state-subtext">Try adjusting your filters.</p>
+        </div>
+      `;
+      return;
+    }
+    
+    visitors.forEach(visitor => {
+      const div = document.createElement('div');
+      div.className = 'visitor-card';
+      
+      const status = visitor.Warden_Approval || 'pending';
+      const statusClass = status === 'Approved' ? 'status-approved' : 
+                         status === 'Rejected' ? 'status-rejected' : 'status-pending';
+      
+      const visitDate = visitor.Visit_Date ? new Date(visitor.Visit_Date).toLocaleDateString('en-IN', {
+        day: '2-digit', month: 'short', year: 'numeric'
+      }) : 'N/A';
+      
+      div.innerHTML = `
+        <div class="visitor-header">
+          <div class="visitor-title">
+            <div class="visitor-icon">👤</div>
+            <div class="visitor-details">
+              <h3>${visitor.Visitor_Name || 'Unknown Visitor'}</h3>
+              <span class="visitor-id-proof">${visitor.ID_Proof || 'No ID Proof'}</span>
+            </div>
+          </div>
+          <span class="status-badge ${statusClass}">${status}</span>
+        </div>
+        
+        <div class="visitor-info-grid">
+          <div class="info-item">
+            <div class="info-label">
+              <span>📞</span>
+              Phone Number
+            </div>
+            <div class="info-value">${visitor.Phone_Number || 'N/A'}</div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-label">
+              <span>👤</span>
+              Visiting Student
+            </div>
+            <div class="info-value">${visitor.Student_Name || 'N/A'}</div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-label">
+              <span>📅</span>
+              Visit Date
+            </div>
+            <div class="info-value">${visitDate}</div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-label">
+              <span>🕐</span>
+              Time
+            </div>
+            <div class="info-value">${visitor.In_Time || 'N/A'} - ${visitor.Out_Time || 'N/A'}</div>
+          </div>
+        </div>
+        
+        <div class="purpose-section">
+          <div class="purpose-label">
+            <span>📝</span>
+            Purpose of Visit
+          </div>
+          <div class="purpose-value">${visitor.Purpose || 'No purpose specified'}</div>
+        </div>
+        
+        <div class="approval-section">
+          <div class="approval-label">Approval Status:</div>
+          <select class="approval-select" onchange="updateApproval('${visitor.Log_ID}', this.value)">
+            <option value="">Select Action</option>
+            <option value="Approved" ${visitor.Warden_Approval === 'Approved' ? 'selected' : ''}>✓ Approve</option>
+            <option value="Rejected" ${visitor.Warden_Approval === 'Rejected' ? 'selected' : ''}>✗ Reject</option>
+          </select>
+        </div>
+      `;
+      
+      container.appendChild(div);
+    });
+  }
+  
+  function filterVisitors() {
+    const filter = document.getElementById('statusFilter').value;
+    
+    let filtered = allVisitors;
+    if (filter !== 'all') {
+      if (filter === 'pending') {
+        filtered = allVisitors.filter(v => !v.Warden_Approval || v.Warden_Approval === 'Pending');
+      } else {
+        filtered = allVisitors.filter(v => v.Warden_Approval === filter);
+      }
+    }
+    
+    renderVisitors(filtered);
+  }
+  
+  function updateApproval(logID, newStatus) {
+    if (!newStatus) return;
+    
+    fetch(`/update_visitor_approval/${logID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ status: newStatus })
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert('✅ ' + (data.message || "Status updated successfully"));
+      
+      // Update the local data
+      const visitor = allVisitors.find(v => v.Log_ID === logID);
+      if (visitor) {
+        visitor.Warden_Approval = newStatus;
+        filterVisitors();
+      }
+    })
+    .catch(err => {
+      console.error("Error updating approval:", err);
+      alert("❌ Error updating approval status");
+    });
+  }  
+</script>
+
+</body>
+</html>
