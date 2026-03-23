@@ -64,6 +64,10 @@ function isWardenAuthenticated(req, res, next) {
 }
 
 // ROUTES
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 app.get("/signup", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "signup.html"));
 });
