@@ -6,7 +6,7 @@ const path = require("path");
 const session = require("express-session");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(cors({
     origin: true,
@@ -30,10 +30,11 @@ app.use(session({
 
 // MySQL Connection
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "12345",
-    database: "hostel_management"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT || 3306
 });
 
 db.connect((err) => {
